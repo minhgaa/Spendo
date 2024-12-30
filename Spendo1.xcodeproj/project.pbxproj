@@ -7,10 +7,35 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		0B2D753120094A45CE45B6C2 /* Pods_Spendo1.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 365E6A4E27C0D37BF0043550 /* Pods_Spendo1.framework */; };
+		DA38F4382D227B4D00DE9BA5 /* ContentView.swift in Sources */ = {isa = PBXBuildFile; fileRef = DA38F4332D227B4C00DE9BA5 /* ContentView.swift */; };
+		DA38F43A2D227B4D00DE9BA5 /* TabItem.swift in Sources */ = {isa = PBXBuildFile; fileRef = DA38F4352D227B4D00DE9BA5 /* TabItem.swift */; };
+		DA38F43B2D227B4D00DE9BA5 /* TabViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = DA38F4362D227B4D00DE9BA5 /* TabViewModel.swift */; };
+		DA38F4402D227CED00DE9BA5 /* AccountView.swift in Sources */ = {isa = PBXBuildFile; fileRef = DA38F43E2D227CED00DE9BA5 /* AccountView.swift */; };
+		DA38F4412D227CED00DE9BA5 /* AccountViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = DA38F43F2D227CED00DE9BA5 /* AccountViewModel.swift */; };
+		DA38F44F2D227D7000DE9BA5 /* HomeView.swift in Sources */ = {isa = PBXBuildFile; fileRef = DA38F44D2D227D7000DE9BA5 /* HomeView.swift */; };
+		DA38F4502D227D7000DE9BA5 /* HomeViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = DA38F44E2D227D7000DE9BA5 /* HomeViewModel.swift */; };
+		DA38F4542D227D9000DE9BA5 /* SavingsViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = DA38F4522D227D9000DE9BA5 /* SavingsViewModel.swift */; };
+		DA38F4552D227D9000DE9BA5 /* SavingsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = DA38F4532D227D9000DE9BA5 /* SavingsView.swift */; };
+		DA38F4592D227DA800DE9BA5 /* StatisticViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = DA38F4582D227DA800DE9BA5 /* StatisticViewModel.swift */; };
+		DA38F45A2D227DA800DE9BA5 /* StatisticView.swift in Sources */ = {isa = PBXBuildFile; fileRef = DA38F4572D227DA800DE9BA5 /* StatisticView.swift */; };
+		DA38F4612D227E0400DE9BA5 /* FontScheme.swift in Sources */ = {isa = PBXBuildFile; fileRef = DA38F45E2D227E0300DE9BA5 /* FontScheme.swift */; };
+		DA38F4622D227E0400DE9BA5 /* AppConstants.swift in Sources */ = {isa = PBXBuildFile; fileRef = DA38F45F2D227E0400DE9BA5 /* AppConstants.swift */; };
+		DA38F4632D227E0400DE9BA5 /* ColorConstants.swift in Sources */ = {isa = PBXBuildFile; fileRef = DA38F4602D227E0400DE9BA5 /* ColorConstants.swift */; };
+		DA38F4672D227E4400DE9BA5 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = DA38F4652D227E4400DE9BA5 /* AppDelegate.swift */; };
+		DA38F4682D227E4400DE9BA5 /* SpendoApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = DA38F4662D227E4400DE9BA5 /* SpendoApp.swift */; };
+		DA38F46B2D227E7D00DE9BA5 /* APIManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = DA38F46A2D227E7D00DE9BA5 /* APIManager.swift */; };
+		DA38F4732D227E8C00DE9BA5 /* ChartExtension.swift in Sources */ = {isa = PBXBuildFile; fileRef = DA38F46C2D227E8C00DE9BA5 /* ChartExtension.swift */; };
+		DA38F4742D227E8C00DE9BA5 /* RoundedCornersView.swift in Sources */ = {isa = PBXBuildFile; fileRef = DA38F46D2D227E8C00DE9BA5 /* RoundedCornersView.swift */; };
+		DA38F4752D227E8C00DE9BA5 /* UINavigationController.swift in Sources */ = {isa = PBXBuildFile; fileRef = DA38F46E2D227E8C00DE9BA5 /* UINavigationController.swift */; };
+		DA38F4762D227E8C00DE9BA5 /* ViewExtension.swift in Sources */ = {isa = PBXBuildFile; fileRef = DA38F46F2D227E8C00DE9BA5 /* ViewExtension.swift */; };
+		DA38F4772D227E8C00DE9BA5 /* ColorExtension.swift in Sources */ = {isa = PBXBuildFile; fileRef = DA38F4702D227E8C00DE9BA5 /* ColorExtension.swift */; };
+		DA38F4782D227E8C00DE9BA5 /* APIExtensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = DA38F4712D227E8C00DE9BA5 /* APIExtensions.swift */; };
+		DA38F4792D227E8C00DE9BA5 /* EncodableExtension.swift in Sources */ = {isa = PBXBuildFile; fileRef = DA38F4722D227E8C00DE9BA5 /* EncodableExtension.swift */; };
+		DA38F47C2D227EAF00DE9BA5 /* CardView.swift in Sources */ = {isa = PBXBuildFile; fileRef = DA38F47B2D227EAF00DE9BA5 /* CardView.swift */; };
+		DA38F47E2D227FAB00DE9BA5 /* AddIncomeView.swift in Sources */ = {isa = PBXBuildFile; fileRef = DA38F4442D227D2A00DE9BA5 /* AddIncomeView.swift */; };
+		DA38F47F2D227FAB00DE9BA5 /* AddIncomeViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = DA38F4452D227D2A00DE9BA5 /* AddIncomeViewModel.swift */; };
 		DA5E6C8D2D227301008B774B /* Spendo1App.swift in Sources */ = {isa = PBXBuildFile; fileRef = DA5E6C8C2D227301008B774B /* Spendo1App.swift */; };
-		DA5E6C8F2D227301008B774B /* ContentView.swift in Sources */ = {isa = PBXBuildFile; fileRef = DA5E6C8E2D227301008B774B /* ContentView.swift */; };
-		DA5E6C912D227302008B774B /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = DA5E6C902D227302008B774B /* Assets.xcassets */; };
-		DA5E6C942D227302008B774B /* Preview Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = DA5E6C932D227302008B774B /* Preview Assets.xcassets */; };
 		DA5E6C9E2D227302008B774B /* Spendo1Tests.swift in Sources */ = {isa = PBXBuildFile; fileRef = DA5E6C9D2D227302008B774B /* Spendo1Tests.swift */; };
 		DA5E6CA82D227302008B774B /* Spendo1UITests.swift in Sources */ = {isa = PBXBuildFile; fileRef = DA5E6CA72D227302008B774B /* Spendo1UITests.swift */; };
 		DA5E6CAA2D227302008B774B /* Spendo1UITestsLaunchTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = DA5E6CA92D227302008B774B /* Spendo1UITestsLaunchTests.swift */; };
@@ -34,9 +59,38 @@
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
+		365E6A4E27C0D37BF0043550 /* Pods_Spendo1.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_Spendo1.framework; sourceTree = BUILT_PRODUCTS_DIR; };
+		6A0F748CCD409B16E0308430 /* Pods-Spendo1.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Spendo1.debug.xcconfig"; path = "Target Support Files/Pods-Spendo1/Pods-Spendo1.debug.xcconfig"; sourceTree = "<group>"; };
+		C95BB5BF66385EF1D405EABC /* Pods-Spendo1.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Spendo1.release.xcconfig"; path = "Target Support Files/Pods-Spendo1/Pods-Spendo1.release.xcconfig"; sourceTree = "<group>"; };
+		DA38F4332D227B4C00DE9BA5 /* ContentView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = ContentView.swift; path = ../../Spendo/Spendo/ContentView.swift; sourceTree = "<group>"; };
+		DA38F4352D227B4D00DE9BA5 /* TabItem.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = TabItem.swift; sourceTree = "<group>"; };
+		DA38F4362D227B4D00DE9BA5 /* TabViewModel.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = TabViewModel.swift; sourceTree = "<group>"; };
+		DA38F43E2D227CED00DE9BA5 /* AccountView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AccountView.swift; sourceTree = "<group>"; };
+		DA38F43F2D227CED00DE9BA5 /* AccountViewModel.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AccountViewModel.swift; sourceTree = "<group>"; };
+		DA38F4442D227D2A00DE9BA5 /* AddIncomeView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AddIncomeView.swift; sourceTree = "<group>"; };
+		DA38F4452D227D2A00DE9BA5 /* AddIncomeViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AddIncomeViewModel.swift; sourceTree = "<group>"; };
+		DA38F44D2D227D7000DE9BA5 /* HomeView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = HomeView.swift; sourceTree = "<group>"; };
+		DA38F44E2D227D7000DE9BA5 /* HomeViewModel.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = HomeViewModel.swift; sourceTree = "<group>"; };
+		DA38F4522D227D9000DE9BA5 /* SavingsViewModel.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SavingsViewModel.swift; sourceTree = "<group>"; };
+		DA38F4532D227D9000DE9BA5 /* SavingsView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SavingsView.swift; sourceTree = "<group>"; };
+		DA38F4572D227DA800DE9BA5 /* StatisticView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StatisticView.swift; sourceTree = "<group>"; };
+		DA38F4582D227DA800DE9BA5 /* StatisticViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StatisticViewModel.swift; sourceTree = "<group>"; };
+		DA38F45E2D227E0300DE9BA5 /* FontScheme.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = FontScheme.swift; sourceTree = "<group>"; };
+		DA38F45F2D227E0400DE9BA5 /* AppConstants.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AppConstants.swift; sourceTree = "<group>"; };
+		DA38F4602D227E0400DE9BA5 /* ColorConstants.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ColorConstants.swift; sourceTree = "<group>"; };
+		DA38F4652D227E4400DE9BA5 /* AppDelegate.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
+		DA38F4662D227E4400DE9BA5 /* SpendoApp.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SpendoApp.swift; sourceTree = "<group>"; };
+		DA38F46A2D227E7D00DE9BA5 /* APIManager.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = APIManager.swift; sourceTree = "<group>"; };
+		DA38F46C2D227E8C00DE9BA5 /* ChartExtension.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ChartExtension.swift; sourceTree = "<group>"; };
+		DA38F46D2D227E8C00DE9BA5 /* RoundedCornersView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = RoundedCornersView.swift; sourceTree = "<group>"; };
+		DA38F46E2D227E8C00DE9BA5 /* UINavigationController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = UINavigationController.swift; sourceTree = "<group>"; };
+		DA38F46F2D227E8C00DE9BA5 /* ViewExtension.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ViewExtension.swift; sourceTree = "<group>"; };
+		DA38F4702D227E8C00DE9BA5 /* ColorExtension.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ColorExtension.swift; sourceTree = "<group>"; };
+		DA38F4712D227E8C00DE9BA5 /* APIExtensions.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = APIExtensions.swift; sourceTree = "<group>"; };
+		DA38F4722D227E8C00DE9BA5 /* EncodableExtension.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = EncodableExtension.swift; sourceTree = "<group>"; };
+		DA38F47B2D227EAF00DE9BA5 /* CardView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CardView.swift; sourceTree = "<group>"; };
 		DA5E6C892D227301008B774B /* Spendo1.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Spendo1.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		DA5E6C8C2D227301008B774B /* Spendo1App.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Spendo1App.swift; sourceTree = "<group>"; };
-		DA5E6C8E2D227301008B774B /* ContentView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ContentView.swift; sourceTree = "<group>"; };
 		DA5E6C902D227302008B774B /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		DA5E6C932D227302008B774B /* Preview Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = "Preview Assets.xcassets"; sourceTree = "<group>"; };
 		DA5E6C992D227302008B774B /* Spendo1Tests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = Spendo1Tests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -51,6 +105,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				0B2D753120094A45CE45B6C2 /* Pods_Spendo1.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -71,6 +126,121 @@
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
+		7C65635B9AB37B9D57617C8E /* Frameworks */ = {
+			isa = PBXGroup;
+			children = (
+				365E6A4E27C0D37BF0043550 /* Pods_Spendo1.framework */,
+			);
+			name = Frameworks;
+			sourceTree = "<group>";
+		};
+		84938C40EA19C62B05474C77 /* Pods */ = {
+			isa = PBXGroup;
+			children = (
+				6A0F748CCD409B16E0308430 /* Pods-Spendo1.debug.xcconfig */,
+				C95BB5BF66385EF1D405EABC /* Pods-Spendo1.release.xcconfig */,
+			);
+			path = Pods;
+			sourceTree = "<group>";
+		};
+		DA38F4432D227D1C00DE9BA5 /* AccountView */ = {
+			isa = PBXGroup;
+			children = (
+				DA38F43E2D227CED00DE9BA5 /* AccountView.swift */,
+				DA38F43F2D227CED00DE9BA5 /* AccountViewModel.swift */,
+			);
+			path = AccountView;
+			sourceTree = "<group>";
+		};
+		DA38F4462D227D2A00DE9BA5 /* AddIncomeView */ = {
+			isa = PBXGroup;
+			children = (
+				DA38F4442D227D2A00DE9BA5 /* AddIncomeView.swift */,
+				DA38F4452D227D2A00DE9BA5 /* AddIncomeViewModel.swift */,
+			);
+			path = AddIncomeView;
+			sourceTree = "<group>";
+		};
+		DA38F4512D227D7400DE9BA5 /* HomeView */ = {
+			isa = PBXGroup;
+			children = (
+				DA38F44D2D227D7000DE9BA5 /* HomeView.swift */,
+				DA38F44E2D227D7000DE9BA5 /* HomeViewModel.swift */,
+			);
+			path = HomeView;
+			sourceTree = "<group>";
+		};
+		DA38F4562D227D9700DE9BA5 /* SavingsView */ = {
+			isa = PBXGroup;
+			children = (
+				DA38F4532D227D9000DE9BA5 /* SavingsView.swift */,
+				DA38F4522D227D9000DE9BA5 /* SavingsViewModel.swift */,
+			);
+			path = SavingsView;
+			sourceTree = "<group>";
+		};
+		DA38F45B2D227DB400DE9BA5 /* StatisticView */ = {
+			isa = PBXGroup;
+			children = (
+				DA38F4572D227DA800DE9BA5 /* StatisticView.swift */,
+				DA38F4582D227DA800DE9BA5 /* StatisticViewModel.swift */,
+			);
+			path = StatisticView;
+			sourceTree = "<group>";
+		};
+		DA38F45C2D227DCF00DE9BA5 /* View */ = {
+			isa = PBXGroup;
+			children = (
+				DA38F45B2D227DB400DE9BA5 /* StatisticView */,
+				DA38F4512D227D7400DE9BA5 /* HomeView */,
+				DA38F4562D227D9700DE9BA5 /* SavingsView */,
+				DA38F4462D227D2A00DE9BA5 /* AddIncomeView */,
+				DA38F4432D227D1C00DE9BA5 /* AccountView */,
+			);
+			path = View;
+			sourceTree = "<group>";
+		};
+		DA38F4642D227E0800DE9BA5 /* New Group */ = {
+			isa = PBXGroup;
+			children = (
+				DA38F45F2D227E0400DE9BA5 /* AppConstants.swift */,
+				DA38F4602D227E0400DE9BA5 /* ColorConstants.swift */,
+				DA38F45E2D227E0300DE9BA5 /* FontScheme.swift */,
+			);
+			path = "New Group";
+			sourceTree = "<group>";
+		};
+		DA38F4692D227E4D00DE9BA5 /* Application */ = {
+			isa = PBXGroup;
+			children = (
+				DA38F4652D227E4400DE9BA5 /* AppDelegate.swift */,
+				DA38F4662D227E4400DE9BA5 /* SpendoApp.swift */,
+			);
+			path = Application;
+			sourceTree = "<group>";
+		};
+		DA38F47A2D227E9100DE9BA5 /* Extensions */ = {
+			isa = PBXGroup;
+			children = (
+				DA38F4712D227E8C00DE9BA5 /* APIExtensions.swift */,
+				DA38F46C2D227E8C00DE9BA5 /* ChartExtension.swift */,
+				DA38F4702D227E8C00DE9BA5 /* ColorExtension.swift */,
+				DA38F4722D227E8C00DE9BA5 /* EncodableExtension.swift */,
+				DA38F46D2D227E8C00DE9BA5 /* RoundedCornersView.swift */,
+				DA38F46E2D227E8C00DE9BA5 /* UINavigationController.swift */,
+				DA38F46F2D227E8C00DE9BA5 /* ViewExtension.swift */,
+			);
+			path = Extensions;
+			sourceTree = "<group>";
+		};
+		DA38F47D2D227EB800DE9BA5 /* CustomView */ = {
+			isa = PBXGroup;
+			children = (
+				DA38F47B2D227EAF00DE9BA5 /* CardView.swift */,
+			);
+			path = CustomView;
+			sourceTree = "<group>";
+		};
 		DA5E6C802D227301008B774B = {
 			isa = PBXGroup;
 			children = (
@@ -78,6 +248,8 @@
 				DA5E6C9C2D227302008B774B /* Spendo1Tests */,
 				DA5E6CA62D227302008B774B /* Spendo1UITests */,
 				DA5E6C8A2D227301008B774B /* Products */,
+				84938C40EA19C62B05474C77 /* Pods */,
+				7C65635B9AB37B9D57617C8E /* Frameworks */,
 			);
 			sourceTree = "<group>";
 		};
@@ -94,8 +266,16 @@
 		DA5E6C8B2D227301008B774B /* Spendo1 */ = {
 			isa = PBXGroup;
 			children = (
+				DA38F47D2D227EB800DE9BA5 /* CustomView */,
+				DA38F46A2D227E7D00DE9BA5 /* APIManager.swift */,
+				DA38F47A2D227E9100DE9BA5 /* Extensions */,
+				DA38F4692D227E4D00DE9BA5 /* Application */,
+				DA38F4642D227E0800DE9BA5 /* New Group */,
 				DA5E6C8C2D227301008B774B /* Spendo1App.swift */,
-				DA5E6C8E2D227301008B774B /* ContentView.swift */,
+				DA38F4332D227B4C00DE9BA5 /* ContentView.swift */,
+				DA38F4352D227B4D00DE9BA5 /* TabItem.swift */,
+				DA38F4362D227B4D00DE9BA5 /* TabViewModel.swift */,
+				DA38F45C2D227DCF00DE9BA5 /* View */,
 				DA5E6C902D227302008B774B /* Assets.xcassets */,
 				DA5E6C922D227302008B774B /* Preview Content */,
 			);
@@ -134,9 +314,11 @@
 			isa = PBXNativeTarget;
 			buildConfigurationList = DA5E6CAD2D227302008B774B /* Build configuration list for PBXNativeTarget "Spendo1" */;
 			buildPhases = (
+				637DBB13C45D315C1C21F753 /* [CP] Check Pods Manifest.lock */,
 				DA5E6C852D227301008B774B /* Sources */,
 				DA5E6C862D227301008B774B /* Frameworks */,
-				DA5E6C872D227301008B774B /* Resources */,
+				13F995EBDD8991149C9BA5AA /* [CP] Embed Pods Frameworks */,
+				DA38F4802D22802000DE9BA5 /* Resources */,
 			);
 			buildRules = (
 			);
@@ -227,12 +409,10 @@
 /* End PBXProject section */
 
 /* Begin PBXResourcesBuildPhase section */
-		DA5E6C872D227301008B774B /* Resources */ = {
+		DA38F4802D22802000DE9BA5 /* Resources */ = {
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				DA5E6C942D227302008B774B /* Preview Assets.xcassets in Resources */,
-				DA5E6C912D227302008B774B /* Assets.xcassets in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -252,13 +432,81 @@
 		};
 /* End PBXResourcesBuildPhase section */
 
+/* Begin PBXShellScriptBuildPhase section */
+		13F995EBDD8991149C9BA5AA /* [CP] Embed Pods Frameworks */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputFileListPaths = (
+				"${PODS_ROOT}/Target Support Files/Pods-Spendo1/Pods-Spendo1-frameworks-${CONFIGURATION}-input-files.xcfilelist",
+			);
+			name = "[CP] Embed Pods Frameworks";
+			outputFileListPaths = (
+				"${PODS_ROOT}/Target Support Files/Pods-Spendo1/Pods-Spendo1-frameworks-${CONFIGURATION}-output-files.xcfilelist",
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "\"${PODS_ROOT}/Target Support Files/Pods-Spendo1/Pods-Spendo1-frameworks.sh\"\n";
+			showEnvVarsInLog = 0;
+		};
+		637DBB13C45D315C1C21F753 /* [CP] Check Pods Manifest.lock */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputFileListPaths = (
+			);
+			inputPaths = (
+				"${PODS_PODFILE_DIR_PATH}/Podfile.lock",
+				"${PODS_ROOT}/Manifest.lock",
+			);
+			name = "[CP] Check Pods Manifest.lock";
+			outputFileListPaths = (
+			);
+			outputPaths = (
+				"$(DERIVED_FILE_DIR)/Pods-Spendo1-checkManifestLockResult.txt",
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "diff \"${PODS_PODFILE_DIR_PATH}/Podfile.lock\" \"${PODS_ROOT}/Manifest.lock\" > /dev/null\nif [ $? != 0 ] ; then\n    # print error to STDERR\n    echo \"error: The sandbox is not in sync with the Podfile.lock. Run 'pod install' or update your CocoaPods installation.\" >&2\n    exit 1\nfi\n# This output is used by Xcode 'outputs' to avoid re-running this script phase.\necho \"SUCCESS\" > \"${SCRIPT_OUTPUT_FILE_0}\"\n";
+			showEnvVarsInLog = 0;
+		};
+/* End PBXShellScriptBuildPhase section */
+
 /* Begin PBXSourcesBuildPhase section */
 		DA5E6C852D227301008B774B /* Sources */ = {
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				DA5E6C8F2D227301008B774B /* ContentView.swift in Sources */,
+				DA38F47E2D227FAB00DE9BA5 /* AddIncomeView.swift in Sources */,
+				DA38F47F2D227FAB00DE9BA5 /* AddIncomeViewModel.swift in Sources */,
+				DA38F4782D227E8C00DE9BA5 /* APIExtensions.swift in Sources */,
+				DA38F4402D227CED00DE9BA5 /* AccountView.swift in Sources */,
+				DA38F4502D227D7000DE9BA5 /* HomeViewModel.swift in Sources */,
+				DA38F4772D227E8C00DE9BA5 /* ColorExtension.swift in Sources */,
+				DA38F4552D227D9000DE9BA5 /* SavingsView.swift in Sources */,
+				DA38F4742D227E8C00DE9BA5 /* RoundedCornersView.swift in Sources */,
+				DA38F4622D227E0400DE9BA5 /* AppConstants.swift in Sources */,
+				DA38F4592D227DA800DE9BA5 /* StatisticViewModel.swift in Sources */,
+				DA38F4792D227E8C00DE9BA5 /* EncodableExtension.swift in Sources */,
+				DA38F4762D227E8C00DE9BA5 /* ViewExtension.swift in Sources */,
+				DA38F4752D227E8C00DE9BA5 /* UINavigationController.swift in Sources */,
+				DA38F4682D227E4400DE9BA5 /* SpendoApp.swift in Sources */,
+				DA38F4412D227CED00DE9BA5 /* AccountViewModel.swift in Sources */,
 				DA5E6C8D2D227301008B774B /* Spendo1App.swift in Sources */,
+				DA38F4732D227E8C00DE9BA5 /* ChartExtension.swift in Sources */,
+				DA38F4612D227E0400DE9BA5 /* FontScheme.swift in Sources */,
+				DA38F4672D227E4400DE9BA5 /* AppDelegate.swift in Sources */,
+				DA38F43A2D227B4D00DE9BA5 /* TabItem.swift in Sources */,
+				DA38F45A2D227DA800DE9BA5 /* StatisticView.swift in Sources */,
+				DA38F46B2D227E7D00DE9BA5 /* APIManager.swift in Sources */,
+				DA38F47C2D227EAF00DE9BA5 /* CardView.swift in Sources */,
+				DA38F4632D227E0400DE9BA5 /* ColorConstants.swift in Sources */,
+				DA38F44F2D227D7000DE9BA5 /* HomeView.swift in Sources */,
+				DA38F4382D227B4D00DE9BA5 /* ContentView.swift in Sources */,
+				DA38F4542D227D9000DE9BA5 /* SavingsViewModel.swift in Sources */,
+				DA38F43B2D227B4D00DE9BA5 /* TabViewModel.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -332,7 +580,7 @@
 				DEBUG_INFORMATION_FORMAT = dwarf;
 				ENABLE_STRICT_OBJC_MSGSEND = YES;
 				ENABLE_TESTABILITY = YES;
-				ENABLE_USER_SCRIPT_SANDBOXING = YES;
+				ENABLE_USER_SCRIPT_SANDBOXING = NO;
 				GCC_C_LANGUAGE_STANDARD = gnu17;
 				GCC_DYNAMIC_NO_PIC = NO;
 				GCC_NO_COMMON_BLOCKS = YES;
@@ -395,7 +643,7 @@
 				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
 				ENABLE_NS_ASSERTIONS = NO;
 				ENABLE_STRICT_OBJC_MSGSEND = YES;
-				ENABLE_USER_SCRIPT_SANDBOXING = YES;
+				ENABLE_USER_SCRIPT_SANDBOXING = NO;
 				GCC_C_LANGUAGE_STANDARD = gnu17;
 				GCC_NO_COMMON_BLOCKS = YES;
 				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
@@ -416,6 +664,7 @@
 		};
 		DA5E6CAE2D227302008B774B /* Debug */ = {
 			isa = XCBuildConfiguration;
+			baseConfigurationReference = 6A0F748CCD409B16E0308430 /* Pods-Spendo1.debug.xcconfig */;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
@@ -445,6 +694,7 @@
 		};
 		DA5E6CAF2D227302008B774B /* Release */ = {
 			isa = XCBuildConfiguration;
+			baseConfigurationReference = C95BB5BF66385EF1D405EABC /* Pods-Spendo1.release.xcconfig */;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
