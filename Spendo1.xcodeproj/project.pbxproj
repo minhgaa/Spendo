@@ -8,7 +8,8 @@
 
 /* Begin PBXBuildFile section */
 		0B2D753120094A45CE45B6C2 /* Pods_Spendo1.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 365E6A4E27C0D37BF0043550 /* Pods_Spendo1.framework */; };
-		DA38F4382D227B4D00DE9BA5 /* ContentView.swift in Sources */ = {isa = PBXBuildFile; fileRef = DA38F4332D227B4C00DE9BA5 /* ContentView.swift */; };
+		DA025B462D22A4AA001D55EB /* LoginView.swift in Sources */ = {isa = PBXBuildFile; fileRef = DA025B452D22A4AA001D55EB /* LoginView.swift */; };
+		DA3000CD2D229565003186C2 /* ContentView.swift in Sources */ = {isa = PBXBuildFile; fileRef = DA3000CC2D229565003186C2 /* ContentView.swift */; };
 		DA38F43A2D227B4D00DE9BA5 /* TabItem.swift in Sources */ = {isa = PBXBuildFile; fileRef = DA38F4352D227B4D00DE9BA5 /* TabItem.swift */; };
 		DA38F43B2D227B4D00DE9BA5 /* TabViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = DA38F4362D227B4D00DE9BA5 /* TabViewModel.swift */; };
 		DA38F4402D227CED00DE9BA5 /* AccountView.swift in Sources */ = {isa = PBXBuildFile; fileRef = DA38F43E2D227CED00DE9BA5 /* AccountView.swift */; };
@@ -35,7 +36,6 @@
 		DA38F47C2D227EAF00DE9BA5 /* CardView.swift in Sources */ = {isa = PBXBuildFile; fileRef = DA38F47B2D227EAF00DE9BA5 /* CardView.swift */; };
 		DA38F47E2D227FAB00DE9BA5 /* AddIncomeView.swift in Sources */ = {isa = PBXBuildFile; fileRef = DA38F4442D227D2A00DE9BA5 /* AddIncomeView.swift */; };
 		DA38F47F2D227FAB00DE9BA5 /* AddIncomeViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = DA38F4452D227D2A00DE9BA5 /* AddIncomeViewModel.swift */; };
-		DA5E6C8D2D227301008B774B /* Spendo1App.swift in Sources */ = {isa = PBXBuildFile; fileRef = DA5E6C8C2D227301008B774B /* Spendo1App.swift */; };
 		DA5E6C9E2D227302008B774B /* Spendo1Tests.swift in Sources */ = {isa = PBXBuildFile; fileRef = DA5E6C9D2D227302008B774B /* Spendo1Tests.swift */; };
 		DA5E6CA82D227302008B774B /* Spendo1UITests.swift in Sources */ = {isa = PBXBuildFile; fileRef = DA5E6CA72D227302008B774B /* Spendo1UITests.swift */; };
 		DA5E6CAA2D227302008B774B /* Spendo1UITestsLaunchTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = DA5E6CA92D227302008B774B /* Spendo1UITestsLaunchTests.swift */; };
@@ -62,7 +62,9 @@
 		365E6A4E27C0D37BF0043550 /* Pods_Spendo1.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_Spendo1.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		6A0F748CCD409B16E0308430 /* Pods-Spendo1.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Spendo1.debug.xcconfig"; path = "Target Support Files/Pods-Spendo1/Pods-Spendo1.debug.xcconfig"; sourceTree = "<group>"; };
 		C95BB5BF66385EF1D405EABC /* Pods-Spendo1.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Spendo1.release.xcconfig"; path = "Target Support Files/Pods-Spendo1/Pods-Spendo1.release.xcconfig"; sourceTree = "<group>"; };
-		DA38F4332D227B4C00DE9BA5 /* ContentView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = ContentView.swift; path = ../../Spendo/Spendo/ContentView.swift; sourceTree = "<group>"; };
+		DA025B422D22A2A5001D55EB /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		DA025B452D22A4AA001D55EB /* LoginView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LoginView.swift; sourceTree = "<group>"; };
+		DA3000CC2D229565003186C2 /* ContentView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ContentView.swift; sourceTree = "<group>"; };
 		DA38F4352D227B4D00DE9BA5 /* TabItem.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = TabItem.swift; sourceTree = "<group>"; };
 		DA38F4362D227B4D00DE9BA5 /* TabViewModel.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = TabViewModel.swift; sourceTree = "<group>"; };
 		DA38F43E2D227CED00DE9BA5 /* AccountView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AccountView.swift; sourceTree = "<group>"; };
@@ -90,7 +92,6 @@
 		DA38F4722D227E8C00DE9BA5 /* EncodableExtension.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = EncodableExtension.swift; sourceTree = "<group>"; };
 		DA38F47B2D227EAF00DE9BA5 /* CardView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CardView.swift; sourceTree = "<group>"; };
 		DA5E6C892D227301008B774B /* Spendo1.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Spendo1.app; sourceTree = BUILT_PRODUCTS_DIR; };
-		DA5E6C8C2D227301008B774B /* Spendo1App.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Spendo1App.swift; sourceTree = "<group>"; };
 		DA5E6C902D227302008B774B /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		DA5E6C932D227302008B774B /* Preview Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = "Preview Assets.xcassets"; sourceTree = "<group>"; };
 		DA5E6C992D227302008B774B /* Spendo1Tests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = Spendo1Tests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -143,6 +144,14 @@
 			path = Pods;
 			sourceTree = "<group>";
 		};
+		DA025B442D22A489001D55EB /* LoginView */ = {
+			isa = PBXGroup;
+			children = (
+				DA025B452D22A4AA001D55EB /* LoginView.swift */,
+			);
+			path = LoginView;
+			sourceTree = "<group>";
+		};
 		DA38F4432D227D1C00DE9BA5 /* AccountView */ = {
 			isa = PBXGroup;
 			children = (
@@ -191,6 +200,7 @@
 		DA38F45C2D227DCF00DE9BA5 /* View */ = {
 			isa = PBXGroup;
 			children = (
+				DA025B442D22A489001D55EB /* LoginView */,
 				DA38F45B2D227DB400DE9BA5 /* StatisticView */,
 				DA38F4512D227D7400DE9BA5 /* HomeView */,
 				DA38F4562D227D9700DE9BA5 /* SavingsView */,
@@ -271,13 +281,13 @@
 				DA38F47A2D227E9100DE9BA5 /* Extensions */,
 				DA38F4692D227E4D00DE9BA5 /* Application */,
 				DA38F4642D227E0800DE9BA5 /* New Group */,
-				DA5E6C8C2D227301008B774B /* Spendo1App.swift */,
-				DA38F4332D227B4C00DE9BA5 /* ContentView.swift */,
 				DA38F4352D227B4D00DE9BA5 /* TabItem.swift */,
 				DA38F4362D227B4D00DE9BA5 /* TabViewModel.swift */,
 				DA38F45C2D227DCF00DE9BA5 /* View */,
 				DA5E6C902D227302008B774B /* Assets.xcassets */,
 				DA5E6C922D227302008B774B /* Preview Content */,
+				DA3000CC2D229565003186C2 /* ContentView.swift */,
+				DA025B422D22A2A5001D55EB /* Info.plist */,
 			);
 			path = Spendo1;
 			sourceTree = "<group>";
@@ -493,18 +503,18 @@
 				DA38F4762D227E8C00DE9BA5 /* ViewExtension.swift in Sources */,
 				DA38F4752D227E8C00DE9BA5 /* UINavigationController.swift in Sources */,
 				DA38F4682D227E4400DE9BA5 /* SpendoApp.swift in Sources */,
+				DA3000CD2D229565003186C2 /* ContentView.swift in Sources */,
 				DA38F4412D227CED00DE9BA5 /* AccountViewModel.swift in Sources */,
-				DA5E6C8D2D227301008B774B /* Spendo1App.swift in Sources */,
 				DA38F4732D227E8C00DE9BA5 /* ChartExtension.swift in Sources */,
 				DA38F4612D227E0400DE9BA5 /* FontScheme.swift in Sources */,
 				DA38F4672D227E4400DE9BA5 /* AppDelegate.swift in Sources */,
 				DA38F43A2D227B4D00DE9BA5 /* TabItem.swift in Sources */,
 				DA38F45A2D227DA800DE9BA5 /* StatisticView.swift in Sources */,
 				DA38F46B2D227E7D00DE9BA5 /* APIManager.swift in Sources */,
+				DA025B462D22A4AA001D55EB /* LoginView.swift in Sources */,
 				DA38F47C2D227EAF00DE9BA5 /* CardView.swift in Sources */,
 				DA38F4632D227E0400DE9BA5 /* ColorConstants.swift in Sources */,
 				DA38F44F2D227D7000DE9BA5 /* HomeView.swift in Sources */,
-				DA38F4382D227B4D00DE9BA5 /* ContentView.swift in Sources */,
 				DA38F4542D227D9000DE9BA5 /* SavingsViewModel.swift in Sources */,
 				DA38F43B2D227B4D00DE9BA5 /* TabViewModel.swift in Sources */,
 			);
@@ -595,6 +605,7 @@
 				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
 				GCC_WARN_UNUSED_FUNCTION = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
+				GENERATE_INFOPLIST_FILE = NO;
 				IPHONEOS_DEPLOYMENT_TARGET = 17.5;
 				LOCALIZATION_PREFERS_STRING_CATALOGS = YES;
 				MTL_ENABLE_DEBUG_INFO = INCLUDE_SOURCE;
@@ -652,6 +663,7 @@
 				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
 				GCC_WARN_UNUSED_FUNCTION = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
+				GENERATE_INFOPLIST_FILE = NO;
 				IPHONEOS_DEPLOYMENT_TARGET = 17.5;
 				LOCALIZATION_PREFERS_STRING_CATALOGS = YES;
 				MTL_ENABLE_DEBUG_INFO = NO;
@@ -674,6 +686,7 @@
 				DEVELOPMENT_TEAM = JB8Z9HTB6G;
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_FILE = /Users/minhgaa/Downloads/Spendo/Spendo1/Info.plist;
 				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
 				INFOPLIST_KEY_UILaunchScreen_Generation = YES;
@@ -704,6 +717,7 @@
 				DEVELOPMENT_TEAM = JB8Z9HTB6G;
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_FILE = /Users/minhgaa/Downloads/Spendo/Spendo1/Info.plist;
 				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
 				INFOPLIST_KEY_UILaunchScreen_Generation = YES;

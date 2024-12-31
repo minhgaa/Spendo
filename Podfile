@@ -13,4 +13,5 @@ target 'Spendo1' do
 	pod 'Alamofire'
   pod 'GoogleSignIn'
   pod 'GoogleSignInSwift'
+  pod 'GoogleSignInSwiftSupport'
 end
