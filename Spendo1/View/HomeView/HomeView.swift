@@ -4,6 +4,8 @@ struct HomeView: View {
     @StateObject var homeViewModel = HomeViewModel()
     @Environment(\.presentationMode) var presentationMode: Binding<PresentationMode>
     @State private var selectedButton: String = "Today"
+    
+    
     var body: some View {
         VStack(alignment: .leading) {
             HStack {
@@ -26,6 +28,7 @@ struct HomeView: View {
                 }
             }
             .padding(.horizontal)
+
             VStack(alignment: .center) {
                 HStack() {
                     Spacer()
@@ -70,7 +73,6 @@ struct HomeView: View {
                                     .shadow(color: selectedButton == "Year" ? .gray.opacity(0.2) : .clear, radius: 4, x: 0, y: 2)
                             )
                     }
-                    
                     Spacer()
                 }
                 .padding()
@@ -80,6 +82,7 @@ struct HomeView: View {
                         .fill(Color(hex: "#F3F1F4")))
             }
             .frame(maxWidth: .infinity, alignment: .center)
+
             Text("Upcoming Bills")
                 .font(FontScheme.kWorkSansRegular(size: 15))
                 .padding(.horizontal)
@@ -104,65 +107,22 @@ struct HomeView: View {
                 .padding(.horizontal)
             }
             .frame(height: 170)
-            
-            Text("Today Transactions")
+
+            // Dynamically change the title and pass selected button value to TransHisView
+            Text("\(selectedButton) Transactions")
                 .font(FontScheme.kWorkSansRegular(size: 15))
                 .padding(.horizontal)
                 .padding(.vertical)
                 .foregroundColor(Color(hex: "#3E2449"))
-            ScrollView {
-                LazyVStack(spacing: 8) {
-                    ForEach(homeViewModel.trans) { trans in
-                        TransactionRow(title: trans.title, date: trans.date, amount: trans.amount, color: trans.color)}
-                }
-                .padding(.horizontal)
-            }
+
+            TransHisView(accountIds: [])
             
             Spacer()
         }
         .background(Color(.white))
         .edgesIgnoringSafeArea(.bottom)
-    }
-}
-
-struct TransactionRow: View {
-    var title: String
-    var date: String
-    var amount: Float
-    var color: Color
-    
-    var body: some View {
-        HStack {
-            Rectangle()
-                .fill(color.opacity(0.2))
-                .frame(width: 45, height: 45)
-                .cornerRadius(10)
-                .overlay(
-                    Image(systemName: color == .green ? "arrow.up" : "arrow.down")
-                        .foregroundColor(color)
-                )
-            VStack(alignment: .leading) {
-                Text(title)
-                    .font(FontScheme.kWorkSansMedium(size: 16))
-                Text(date)
-                    .font(FontScheme.kInterRegular(size: 12))
-                    .foregroundColor(Color(hex: "#B5B3B3"))
-            }
-            Spacer()
-            Text(String(format: "%.0f", amount))
-                .font(.subheadline)
-                .foregroundColor(color)
-        }
-        .onAppear {
-                        print("HomeView appeared on screen")
-                    }
-                    .onDisappear {
-                        print("HomeView disappeared from screen")
-                    }
-        .padding()
-        .background(Color.white)
-        .cornerRadius(8)
-        .shadow(color: .gray.opacity(0.1), radius: 4, x: 0, y: 2)
+        .hideNavigationBar()
+        .navigationBarBackButtonHidden(true)
     }
 }
 

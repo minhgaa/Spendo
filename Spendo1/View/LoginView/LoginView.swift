@@ -3,81 +3,149 @@ import GoogleSignIn
 import Alamofire
 
 struct LoginView: View {
-    @State private var isLoggedIn = false
+    
+    @State private var isLoggedIn = true
     @State private var email = ""
     @State private var name = ""
-    @State private var selectedCurrency: Currency?
-    @State private var selectedCategory: Category?
-    
-    // List of currencies fetched from the API
+    @State private var token = ""
+    @State private var user: User? = nil
+    @State private var selectedCurrency: Currency? = nil
     @State private var currencies: [Currency] = []
-    
-    // List of categories (replace with your own data)
-    @State private var categories: [Category] = [
-        Category(id: 1, name: "Ăn uống"),
-        Category(id: 2, name: "Hoá đơn"),
-        Category(id: 3, name: "Di chuyển"),
-        // Add other categories here...
-    ]
+    @State private var isSelectingCurrency = false
     
     var body: some View {
-        VStack {
-            if isLoggedIn {
-                Text("Welcome \(email)")
-                    .padding()
-
-                // Currency Selection
-                if let selectedCurrency = selectedCurrency {
-                    Text("Selected Currency: \(selectedCurrency.name)")
+        NavigationView {
+            ZStack {
+                Image("BG")
+                    .resizable()
+                    .scaledToFill()
+                    .edgesIgnoringSafeArea(.all)
+                Group {
+                    
+                    if isLoggedIn {
+                        VStack {
+                            VStack {
+                                Text("Spendo")
+                                    .foregroundColor(Color(hex: "#DF835F"))
+                                    .font(.system(size: 50))
+                                    .fontWeight(.bold)
+                                    .padding()
+                                Text("Welcome, \(name)")
+                                    .font(.system(size: 25))
+                                Button("Log out") {
+                                    handleLogOut()
+                                }
+                            }
+                            .padding(.vertical,200)
+                                NavigationLink(destination: ContentView()) {
+                                    Text("Next")
+                                        .foregroundColor(Color(hex:"#3E2449"))
+                                }
+                                .padding()
+                                .frame(maxWidth: .infinity)
+                                .background(Color.white)
+                                .cornerRadius(15)
+                                .shadow(radius: 5)
+                            Spacer()
+                        }
                         .padding()
-                }
-
-                List(currencies) { currency in
-                    Button(action: {
-                        self.selectedCurrency = currency
-                    }) {
-                        Text(currency.name)
+                    } else if isSelectingCurrency {
+                        VStack {
+                            Text("Select your preferred currency")
+                                .font(.headline)
+                                .padding()
+                            
+                            List(currencies) { currency in
+                                Button(action: {
+                                    self.selectedCurrency = currency
+                                }) {
+                                    Text(currency.name)
+                                        .padding()
+                                        .background(self.selectedCurrency?.id == currency.id ? Color.gray.opacity(0.3) : Color.clear)
+                                        .cornerRadius(8)
+                                }
+                            }
+                            .frame(height: 200)
                             .padding()
-                            .background(self.selectedCurrency?.id == currency.id ? Color.gray.opacity(0.3) : Color.clear)
-                            .cornerRadius(8)
+                            
+                            Button("Register") {
+                                if let selectedCurrency = selectedCurrency {
+                                    handleRegister()
+                                } else {
+                                    print("Please select a currency")
+                                }
+                            }
+                            .padding()
+                            .disabled(selectedCurrency == nil)
+                        }
+                    } else {
+                        VStack {
+                            Text("Spendo")
+                                .foregroundColor(Color(hex: "#DF835F"))
+                                .font(.system(size: 50))
+                                .fontWeight(.bold)
+                                .padding(.vertical,280)
+                            Button(action: {
+                                handleSignInButton()
+                            }) {
+                                HStack {
+                                    Image(systemName: "logo.google")
+                                        .foregroundColor(.white)
+                                    Text("Sign in with Google")
+                                        .font(.headline)
+                                        .fontWeight(.bold)
+                                        .foregroundColor(Color(hex:"#3E2449"))
+                                }
+                                .padding()
+                                .frame(maxWidth: .infinity)
+                                .background(Color.white)
+                                .cornerRadius(15)
+                                .shadow(radius: 5)
+                            }
+                            Spacer()
+                        }
+                        .padding()
                     }
                 }
-                .frame(height: 200)
-                .padding()
-                
-                Button("Select") {
-                    handleSelect()
+                .onAppear {
+                    fetchInitialData()
                 }
-                .padding()
-
-                // Log Out Button
-                Button("Log Out") {
-                    handleLogOut()
-                }
-                .padding()
-                .foregroundColor(.red)
-            } else {
-                Button("Sign in with Google") {
-                    handleSignInButton()
-                }
-                .padding()
             }
         }
-        .onAppear {
-            // Check if user is already logged in
-            if let user = GIDSignIn.sharedInstance.currentUser {
-                self.email = user.profile?.email ?? "No email"
-                self.name = user.profile?.name ?? "No email"
-                self.isLoggedIn = true
-            }
+        .hideNavigationBar()
+        .navigationBarBackButtonHidden(true)
+    }
 
-            // Fetch currencies when the view appears
-            APIManager.shared.getCurrencies { result in
+    private func fetchInitialData() {
+        if let user = GIDSignIn.sharedInstance.currentUser {
+            self.email = user.profile?.email ?? "No email"
+            self.name = user.profile?.name ?? "No email"
+            self.isLoggedIn = true
+        }
+        APIManager.shared.getCurrencies { result in
+            DispatchQueue.main.async {
                 switch result {
                 case .success(let currencies):
                     self.currencies = currencies
                 case .failure(let error):
                     print("Failed to fetch currencies: \(error.localizedDescription)")
+                }
+            }
+        }
+    }
+
+    func handleLogin() {
+        APIManager.shared.login(email: email) { result in
+            DispatchQueue.main.async {
+                switch result {
+                case .success(let token):
+                    print("Login successful, Token: \(token)")
+                    self.token = token
+                    self.isLoggedIn = true
+                    UserDefaults.standard.set(token, forKey: "JWTToken")
+                case .failure(let error):
+                    print("Failed to log in: \(error.localizedDescription)")
+                    self.isSelectingCurrency = true
                 }
             }
         }
@@ -94,44 +162,76 @@ struct LoginView: View {
                 print("Error: Missing User Information")
                 return
             }
+            
+            self.email = user.profile?.email ?? "Unknown"
+            self.name = user.profile?.name ?? "Unknown"
+            APIManager.shared.login(email: email) { result in
+                DispatchQueue.main.async {
+                    switch result {
+                    case .success(let token):
+                        self.token = token
+                        UserDefaults.standard.set(token, forKey: "JWTToken")
+                        self.isLoggedIn = true
+                        if let token1 = UserDefaults.standard.string(forKey: "JWTToken") {
+                            print("Token found: \(token1)")
+                        } else {
+                            print("No token found in UserDefaults")
+                        }
 
-            let email = user.profile?.email ?? "Unknown"
-            let name = user.profile?.name ?? "Unknown"
-            self.email = email
-            self.name = name
-            self.isLoggedIn = true
+                    case .failure:
+                        self.isSelectingCurrency = true
+                    }
+                }
+            }
+        }
+    }
+    func handleLogout() {
+        UserDefaults.standard.removeObject(forKey: "JWTToken")
+        
+        DispatchQueue.main.async {
+            if let window = UIApplication.shared.windows.first {
+                window.rootViewController = UIHostingController(rootView: LoginView())  // Set LoginView as root view
+                window.makeKeyAndVisible()
+            }
         }
     }
 
-    func handleLogOut() {
-        // Set login state to false and clear selections
-        isLoggedIn = false
-        email = ""
-        selectedCurrency = nil
-        selectedCategory = nil
-
-        // Sign out from Google
-        GIDSignIn.sharedInstance.signOut()
-        print("User logged out")
-    }
-    
-    func handleSelect() {
-        // Check if a currency is selected
+    private func handleRegister() {
         guard let selectedCurrency = selectedCurrency else {
             print("No currency selected")
             return
         }
-        print(name)
-       print(email)
-        let currencyId = selectedCurrency.id
-        print(currencyId)
-        APIManager.shared.googleLogin(email: email, currencyId: currencyId, name: name) { result in
-            switch result {
-            case .success:
-                print("Currency selected successfully")
-            case .failure(let error):
-                print("Login failed: \(error.localizedDescription)")
+        let currencyid = selectedCurrency.id
+        APIManager.shared.registerUser(email: email, name: name, currencyid: currencyid) { result in
+            DispatchQueue.main.async {
+                switch result {
+                case .success(let newUser):
+                    self.user = newUser
+                    self.isLoggedIn = true
+                    self.isSelectingCurrency = false
+                    print("User Registered: \(newUser)")
+                case .failure(let error):
+                    print("Failed to register user: \(error)")
+                }
             }
         }
     }
+
+
+
+    
+    func handleLogOut() {
+        isLoggedIn = false
+        email = ""
+        name = ""
+        user = nil
+        selectedCurrency = nil
+        isSelectingCurrency = false
+        UserDefaults.standard.removeObject(forKey: "JWTToken")
+        GIDSignIn.sharedInstance.signOut()
+        print("User logged out")
+    }
+}
+#Preview {
+    LoginView()
 }

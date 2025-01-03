@@ -5,9 +5,10 @@
 import SwiftUI
 import GoogleSignIn
 @main
+
 struct SpendoApp1: App {
     @UIApplicationDelegateAdaptor(AppDelegate.self) var appDelegate
-
+    
     var body: some Scene {
         WindowGroup {
             LoginView()
@@ -18,6 +19,8 @@ struct SpendoApp1: App {
                           GIDSignIn.sharedInstance.restorePreviousSignIn { user, error in
                           }
                         }
+                .hideNavigationBar()
+                .navigationBarBackButtonHidden(true)
         }
     }
 }

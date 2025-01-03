@@ -4,10 +4,11 @@ struct StatisticView: View {
     @StateObject var statsViewModel = StatisticViewModel()
     @Environment(\.presentationMode) var presentationMode: Binding<PresentationMode>
     @State private var selectedTab: String = "Week"
+    @State private var categories: [StatisticViewModel.Category] = []
     let columns = [
-            GridItem(.flexible(), spacing: 8),
-            GridItem(.flexible(), spacing: 8) 
-        ]
+        GridItem(.flexible(), spacing: 8),
+        GridItem(.flexible(), spacing: 8) 
+    ]
     var body: some View {
         VStack(alignment: .leading, spacing: 20) {
             Text("Spendo")
@@ -30,7 +31,7 @@ struct StatisticView: View {
                                     RoundedRectangle(cornerRadius: 12)
                                         .fill(selectedTab == tab ? Color(hex: "#3E2449") : Color.clear)
                                         .shadow(color: selectedTab == tab ? .gray.opacity(0.2) : .clear, radius: 4, x: 0, y: 2)
-                                        .animation(.easeInOut(duration: 0.3), value: selectedTab) // Tự động chuyển đổi mượt màu
+                                        .animation(.easeInOut(duration: 0.3), value: selectedTab)
                                 )
                         }
                     }
@@ -97,8 +98,8 @@ struct StatisticView: View {
             
             ScrollView {
                 LazyVGrid(columns: columns, spacing: 8){
-                    ForEach(statsViewModel.card) { card in
-                        SpendingCardView(icon: card.icon, title: card.title, amount: card.amount, backgroundColor: card.backgroundColor, textColor: card.textColor)}
+                    ForEach(statsViewModel.cards) { card in
+                        SpendingCardView(icon: card.icon, title: card.title, amount: card.amount, backgroundColor: card.backgroundColor)}
                 }
                 .padding(.horizontal)
                 
@@ -106,25 +107,34 @@ struct StatisticView: View {
             }
         }
         .background(Color(.white))
+        .hideNavigationBar()
+        .navigationBarBackButtonHidden(true)
+        .onAppear {
+            statsViewModel.fetchCategories { result in
+                if case let .failure(error) = result {
+                }
+            }
+        }
+
     }
+
 }
 struct SpendingCardView: View {
     let icon: String
     let title: String
-    let amount: String
+    let amount: Decimal
     let backgroundColor: Color
-    let textColor: Color
     
     var body: some View {
         HStack {
             Image(systemName: icon)
                 .font(.largeTitle)
-                .foregroundColor(textColor)
+                .foregroundColor(.white)
             VStack {
                 Text(title)
                     .font(FontScheme.kWorkSansMedium(size: 15))
                     .foregroundColor(.white)
-                Text(amount)
+                Text(String(format: "%.2f", NSDecimalNumber(decimal: amount).doubleValue))
                     .font(FontScheme.kInterMedium(size: 24))
                     .foregroundColor(.white)
             }

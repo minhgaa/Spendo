@@ -97,7 +97,7 @@ struct ContentView: View {
                 .hidden()
                 
                 NavigationLink(
-                    destination: TransferMoneyView(),
+                    destination: TransferView(),
                     isActive: $showTransferMoney,
                     label: { EmptyView() }
                 )
@@ -115,8 +115,8 @@ struct ContentView: View {
             StatisticView()
         case "Wallet":
             AccountView()
-        case "Savings":
-            SavingsView()
+        case "Budget":
+            BudgetListView()
         default:
             Text("Page not found")
         }
@@ -142,32 +142,5 @@ struct ActionButton: View {
                 .multilineTextAlignment(.center)
         }
         .frame(width: 100, height: 120)
-    }
-}
-
-
-struct AddOutcomeView: View {
-    var body: some View {
-        VStack {
-            Text("Add Outcome")
-                .font(.largeTitle)
-                .padding()
-            Spacer()
-        }
-        .navigationTitle("Add Outcome")
-        .navigationBarTitleDisplayMode(.inline)
-    }
-}
-
-struct TransferMoneyView: View {
-    var body: some View {
-        VStack {
-            Text("Transfer Money")
-                .font(.largeTitle)
-                .padding()
-            Spacer()
-        }
-        .navigationTitle("Transfer Money")
-        .navigationBarTitleDisplayMode(.inline)
     }
 }

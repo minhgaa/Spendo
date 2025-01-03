@@ -1,24 +1,20 @@
 import SwiftUI
 
-struct AddIncomeView: View {
-    @Environment(\.dismiss) var dismiss
-    @State private var title: String = ""
+struct TransferView: View {
+    @StateObject private var transferViewModel = TransferViewModel()
+    @StateObject private var accountViewModel = AccountViewModel()
+    @State private var sourceAccountId: Int? = nil
+    @State private var targetAccountId: Int? = nil
     @State private var description: String = ""
+    @State private var transferSuccess: Bool? = nil
+    @State private var title: String = ""
+    @State private var inputAmount: String = ""
     @State private var category: String = ""
-    @State private var createdOn: Date = Date()
     @State private var isEditing: Bool = false
     @State private var showPopup = false
-    @State private var showPopup1 = false
+    @State private var createdTransfer: Transfer? = nil
+    @State private var TransferDto: TransferCreateDto? = nil
     @State private var selectedAmount: Double = 0
-    @State private var inputAmount: String = ""
-    @State private var accountId: Int? = nil
-    @State private var selectedCategory: Int? = nil
-    @State private var categories: [Category] = []
-    @State private var createdIncome: Income? = nil
-    @State private var IncomeDto: IncomeCreateDto? = nil
-    @StateObject private var accountViewModel = AccountViewModel()
-    @StateObject private var statisticViewModel = StatisticViewModel()
-    @StateObject private var viewModel = AddIncomeViewModel()
     @State private var showAlert = false // Để hiển thị Alert
     @State private var alertMessage = ""
     @Environment(\.presentationMode) var presentationMode
@@ -30,26 +26,42 @@ struct AddIncomeView: View {
                     .font(FontScheme.kWorkSansBold(size: 20))
                     .foregroundColor(Color(hex: "#3E2449"))
                 Spacer()
-                Image(systemName: "square.and.arrow.down")
-                    .foregroundColor(Color(hex: "#DF835F"))
-                Text("Income")
+                Image(systemName: "arrow.left.arrow.right")
+                Text("Transfer")
                     .font(FontScheme.kWorkSansBold(size: 15))
-                    .foregroundColor(Color(hex: "#DF835F"))
+                    .foregroundColor(Color.black)
                     .padding(.top,2)
             }
-            Button(action: {
-                            dismiss()
-            }) {
-                Image(systemName: "chevron.backward")
-                    .foregroundColor(Color.black)
-            }
-            .frame(width: 30, height: 30)
-            
-            TextField("Income Title", text: $title)
+            TextField("Transfer Title", text: $title)
                 .font(FontScheme.kWorkSansBold(size: 32))
                 .foregroundColor(.black)
-
+            
             Divider()
+            Text("From")
+                .font(.headline)
+            if !accountViewModel.account.isEmpty {
+                Picker("Source Account", selection: $sourceAccountId) {
+                    ForEach(accountViewModel.account, id: \.id) { account in
+                        Text(account.title).tag(account.id as Int?)
+                    }
+                }
+                .pickerStyle(SegmentedPickerStyle())
+            } else {
+                Text("Loading accounts...")
+            }
+            
+            Text("To")
+                .font(.headline)
+            if !accountViewModel.account.isEmpty {
+                Picker("Target Account", selection: $targetAccountId) {
+                    ForEach(accountViewModel.account, id: \.id) { account in
+                        Text(account.title).tag(account.id as Int?)
+                    }
+                }
+                .pickerStyle(SegmentedPickerStyle())
+            } else {
+                Text("Loading accounts...")
+            }
             VStack {
                 Button(action: {
                     showPopup.toggle()
@@ -57,13 +69,13 @@ struct AddIncomeView: View {
                     HStack {
                         Text(selectedAmount > 0 ? "\(selectedAmount, specifier: "%.2f")$" : "+ Add Money")
                             .fontWeight(.medium)
-                            .foregroundColor(Color(hex: "#DF835F"))
+                            .foregroundColor(Color(hex: "#3E2449"))
                     }
                     .frame(maxWidth: 150)
                     .padding()
                     .background(
                         RoundedRectangle(cornerRadius: 30)
-                            .stroke(Color(hex: "#DF835F"), lineWidth: 1)
+                            .stroke(Color(hex: "#3E2449"), lineWidth: 1)
                     )
                 }
             }
@@ -81,27 +93,17 @@ struct AddIncomeView: View {
                                 .font(.system(size: 20))
                                 .padding()
                                 .foregroundColor(.black)
-                                
+                            
                         }
                     }
                     .padding()
                     HStack{
-                        if !accountViewModel.account.isEmpty {
-                            Picker("Account", selection: $accountId) {
-                                ForEach(accountViewModel.account, id: \.id) { account in
-                                    Text(account.title).tag(account.id as Int?)
-                                }
-                            }
-                            .pickerStyle(SegmentedPickerStyle())
-                        } else {
-                            Text("Loading accounts...")
-                        }
+                        
                     }
-                    .padding()
                     HStack{
                         Text(inputAmount.isEmpty ? "0" : inputAmount)
                             .font(FontScheme.kWorkSansSemiBold(size: 36))
-                            
+                        
                         Text("$")
                             .font(FontScheme.kWorkSansRegular(size: 36))
                     }
@@ -134,7 +136,7 @@ struct AddIncomeView: View {
                                     .padding()
                                     .background(Color.red)
                                     .foregroundColor(.white)
-                                    
+                                
                             }
                             .frame(width: 60, height: 60)
                             .clipShape(Circle())
@@ -155,54 +157,8 @@ struct AddIncomeView: View {
                 }
             }
             
-                
-            Button(action: {
-                showPopup1.toggle()
-            }) {
-                HStack {
-                    Text(selectedCategory != nil ? getCategoryName(by: selectedCategory) : "+ Add Category")
-                        .fontWeight(.medium)
-                        .foregroundColor(Color(hex: "#DF835F"))
-
-                }
-                .frame(maxWidth: 167)
-                .padding()
-                .background(
-                    RoundedRectangle(cornerRadius: 30)
-                        .stroke(Color(hex: "#DF835F"), lineWidth: 1)
-                )
-            }
-            .sheet(isPresented: $showPopup1) {
-                VStack(alignment: .leading) {
-                    Text("Choose category")
-                        .font(FontScheme.kWorkSansBold(size: 20))
-                        .padding()
-
-                    HStack{
-                        if !statisticViewModel.categories.isEmpty {
-                            Picker("Category", selection: $selectedCategory) {
-                                ForEach(statisticViewModel.categories, id: \.id) { category in
-                                    Text(category.name).tag(category.id as Int?)
-                                }
-                            }
-                            .pickerStyle(WheelPickerStyle())
-                        } else {
-                            Text("Loading categories...")
-                        }
-                    }
-                    .padding()
-
-                    Button("Done") {
-                        showPopup1 = false
-                    }
-                    .frame(width: 100, height: 45)
-                    .background(Color(hex: "#DF835F"))
-                    .foregroundColor(.white)
-                    .cornerRadius(30)
-                    .padding(.top)
-                }
-                .padding()
-            }
+            
+            
             HStack(alignment: .top) {
                 Image(systemName: "text.justify")
                     .foregroundColor(.gray)
@@ -245,39 +201,18 @@ struct AddIncomeView: View {
             .background(Color.gray.opacity(0.1))
             .cornerRadius(10)
             .animation(.easeInOut, value: isEditing)
-
-
-            HStack {
-                Image(systemName: "calendar")
-                    .foregroundColor(.gray)
-                Text("Created on")
-                    .foregroundColor(.gray)
-                    .font(FontScheme.kWorkSansMedium(size: 14))
-                Spacer()
-                DatePicker(
-                        "",
-                        selection: $createdOn,
-                        displayedComponents: [.date]
-                    )
-                    .labelsHidden()
-                    .foregroundColor(.black)
-            }
-            .frame(maxWidth: .infinity)
-            .padding()
-            .background(Color.gray.opacity(0.1))
-            .cornerRadius(10)
-
+            
+            
             HStack {
                 Spacer()
-                Button(action: {
-                    handleAddIncome()
+                Button(action: { handleTransfer()
                 }) {
-                    Text("Add Income")
+                    Text("Tranfer")
                         .fontWeight(.bold)
                         .foregroundColor(.white)
                         .frame(maxWidth: 150)
                         .padding()
-                        .background(Color(hex: "#DF835F"))
+                        .background(Color.black)
                         .cornerRadius(40)
                 }
             }
@@ -295,68 +230,64 @@ struct AddIncomeView: View {
         }
         .padding()
         .padding(.horizontal)
+        .hideNavigationBar()
+        .navigationBarBackButtonHidden(true)
         .onAppear {
             accountViewModel.getAccount { result in
                 if case .failure(let error) = result {
                     print("Failed to load accounts: \(error)")
                 }
             }
-            statisticViewModel.fetchCategories {
-                result in
-                    if case .failure(let error) = result {
-                        print("Failed to load categories: \(error)")
-                    }
-            }
         }
-        .hideNavigationBar()
-        .navigationBarBackButtonHidden(true)
     }
-    private func appendNumber(_ number: String) {
-            inputAmount += number
+
+    func appendNumber(_ number: String) {
+        if inputAmount == "0" {
+            inputAmount = number
+        } else {
+            inputAmount.append(number)
         }
-        private func appendDot() {
-            if !inputAmount.contains(".") {
-                inputAmount += "."
-            }
+    }
+
+    func appendDot() {
+        if !inputAmount.contains(".") {
+            inputAmount.append(".")
         }
-    func handleAddIncome() {
-        IncomeDto = IncomeCreateDto(
+    }
+
+    func handleTransfer() {
+        TransferDto = TransferCreateDto(
             title: title,
-            description: description,
+            description: description.isEmpty ? nil : description,
             amount: Decimal(selectedAmount),
-            accountid: accountId ?? 1,
-            categoryid: selectedCategory ?? 1
+            sourceAccountId: sourceAccountId ?? 0,
+            targetAccountId: targetAccountId ?? 0,
+            categoryId: nil
         )
-        print(IncomeDto)
-        guard let IncomeDto = IncomeDto else {
-            print("Income data is incomplete")
-            return
-        }
-        
-        viewModel.createIncome(income: IncomeDto) { result in
+        print(TransferDto)
+        guard let transferInfo = TransferDto else {
+                print("Failed to prepare transfer data")
+                return
+            }
+        transferViewModel.createTransfer(transferInfo: transferInfo) { result in
             DispatchQueue.main.async {
                 switch result {
-                case .success(let Income):
-                    createdIncome = Income
-                    alertMessage = "Income created successfully."
+                case .success(let Transfer):
+                    createdTransfer = Transfer
+                    alertMessage = "Transfer created successfully."
                     showAlert.toggle()
                 case .failure(let error):
-                    print("Failed to add Income: \(error)")
-                    alertMessage = "Income created successfully."
+                    print("Failed to Transfer: \(error)")
+                    alertMessage = "Transfer created successfully."
                     showAlert.toggle()
                 }
             }
         }
     }
-    func getCategoryName(by id: Int?) -> String {
-        if let id = id, let category = statisticViewModel.categories.first(where: { $0.id == id }) {
-            return category.name
-        }
-        return ""
-    }
-
-
 }
-#Preview {
-    AddIncomeView()
+
+struct TransferView_Previews: PreviewProvider {
+    static var previews: some View {
+        TransferView()
+    }
 }

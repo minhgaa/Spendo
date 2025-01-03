@@ -8,6 +8,6 @@ class TabViewModel: ObservableObject {
         TabItem(title: "Stats", icon: "chart.bar", tag: "Stats"),
         TabItem(title: "Add", icon: "plus.circle", tag: "Add"),
         TabItem(title: "Wallet", icon: "creditcard", tag: "Wallet"),
-        TabItem(title: "Savings", icon: "person.crop.circle", tag: "Savings")
+        TabItem(title: "Budget", icon: "person.crop.circle", tag: "Budget")
     ]
 }

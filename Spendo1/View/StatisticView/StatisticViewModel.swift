@@ -1,36 +1,104 @@
 import Foundation
 import SwiftUI
+import Alamofire
 
 class StatisticViewModel: ObservableObject {
+    @Published var categories: [Category] = []
+    @Published var cards: [CardItem] = []
+    @Published private var outcomes: [Outcome] = []
+    struct Category: Identifiable, Hashable, Decodable {
+        let id: Int
+        let name: String
+    }
+    
     struct CardItem: Identifiable {
-        let id = UUID()
+        let id: Int
         let icon: String
         let title: String
-        let amount: String
+        let amount: Decimal
         let backgroundColor: Color
-        let textColor: Color
     }
-    let card: [CardItem]
-    init() {
-        let rawCard = [
-            ("fork.knife", "Food", "$200"),
-            ("doc.text", "Bill", "$100"),
-            ("fork.knife", "Food", "$200"),
-            ("doc.text", "Bill", "$100"),
-            ("fork.knife", "Food", "$200"),
-            ("doc.text", "Bill", "$100"),
-            ("fork.knife", "Food", "$200"),
-            ("doc.text", "Bill", "$100"),
-        ]
-        self.card = rawCard.enumerated().map { index, item in
-            let isGroupOne = (index / 2) % 2 == 0
-            return CardItem(
-                icon: item.0,
-                title: item.1,
-                amount: item.2,
-                backgroundColor: isGroupOne ? Color(hex: "#3E2449") : Color(hex: "#DF835F"),
-                textColor: isGroupOne ? Color(hex: "#B284C6") : Color(hex: "#EEC0AE")
-            )
+    
+    struct CategoryWithAmount {
+        let id: Int
+        let name: String
+        let amount: Decimal
+    }
+    
+    private let baseURL = "http://localhost:5178"
+    
+    func fetchAmount(categoryIds: [Int], completion: @escaping (Result<Decimal, Error>) -> Void) {
+        let service = AddOutcomeViewModel()
+        
+        service.getOutcomes(
+            accountids: [],
+            categoryids: categoryIds,
+            startDate: nil,
+            endDate: nil
+        ) { result in
+            DispatchQueue.main.async {
+                switch result {
+                case .success(let fetchedOutcomes):
+                    self.outcomes = fetchedOutcomes
+                    let totalAmount = fetchedOutcomes.reduce(Decimal(0)) { partialResult, outcome in
+                        partialResult + outcome.amount
+                    }
+                    
+                    completion(.success(totalAmount))
+                    
+                case .failure(let error):
+                    // Trả về lỗi nếu có
+                    completion(.failure(error))
+                    
+                    print("Error: \(error.localizedDescription)")
+                    debugPrint(error)
+                }
+            }
         }
+    }
+
+    
+    func fetchCategories(completion: @escaping (Result<Void, Error>) -> Void) {
+        let url = "\(baseURL)/Category"
+        AF.request(url, method: .get)
+            .validate()
+            .responseDecodable(of: [Category].self) { response in
+                switch response.result {
+                case .success(let fetchedCategories):
+                    DispatchQueue.main.async {
+                        self.categories = fetchedCategories
+                        let categoriesWithAmounts = fetchedCategories.map { category in
+                            var total: Decimal = 0
+                            self.fetchAmount(categoryIds: [category.id]) { result in
+                                switch result {
+                                case .success(let totalAmount):
+                                    total = totalAmount
+                                case .failure(let error):
+                                    print("Lỗi khi lấy dữ liệu: \(error.localizedDescription)")
+                                }
+                            }
+                            return CategoryWithAmount(
+                                id: category.id,
+                                name: category.name,
+                                amount: total
+                            )
+                        }
+                        
+                        self.cards = categoriesWithAmounts.enumerated().map { index, item in
+                            let isEven = index % 2 == 0
+                            return CardItem(
+                                id: item.id,
+                                icon: "dollarsign.circle.fill",
+                                title: item.name,
+                                amount: item.amount,
+                                backgroundColor: isEven ? Color(hex: "#3E2449") : Color(hex: "#DF835F")
+                            )
+                        }
+                        completion(.success(()))
+                    }
+                case .failure(let error):
+                    completion(.failure(error))
+                }
+            }
     }
 }

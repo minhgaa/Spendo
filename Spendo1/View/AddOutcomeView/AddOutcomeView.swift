@@ -1,7 +1,6 @@
 import SwiftUI
 
-struct AddIncomeView: View {
-    @Environment(\.dismiss) var dismiss
+struct AddOutcomeView: View {
     @State private var title: String = ""
     @State private var description: String = ""
     @State private var category: String = ""
@@ -10,18 +9,23 @@ struct AddIncomeView: View {
     @State private var showPopup = false
     @State private var showPopup1 = false
     @State private var selectedAmount: Double = 0
+    @State private var limit: Decimal = 0
+    @State private var cur: Decimal = 0
     @State private var inputAmount: String = ""
     @State private var accountId: Int? = nil
     @State private var selectedCategory: Int? = nil
     @State private var categories: [Category] = []
-    @State private var createdIncome: Income? = nil
-    @State private var IncomeDto: IncomeCreateDto? = nil
+    @State private var createdOutcome: Outcome? = nil
+    @State private var outcomeDto: OutcomeCreateDto? = nil
+    @State private var budget: Budget? = nil
+    @State private var showWarning: Bool = false
     @StateObject private var accountViewModel = AccountViewModel()
     @StateObject private var statisticViewModel = StatisticViewModel()
-    @StateObject private var viewModel = AddIncomeViewModel()
+    @StateObject private var viewModel = AddOutcomeViewModel()
     @State private var showAlert = false // Để hiển thị Alert
     @State private var alertMessage = ""
     @Environment(\.presentationMode) var presentationMode
+    
 
     var body: some View {
         VStack(alignment: .leading, spacing: 20) {
@@ -30,22 +34,14 @@ struct AddIncomeView: View {
                     .font(FontScheme.kWorkSansBold(size: 20))
                     .foregroundColor(Color(hex: "#3E2449"))
                 Spacer()
-                Image(systemName: "square.and.arrow.down")
-                    .foregroundColor(Color(hex: "#DF835F"))
-                Text("Income")
+                Image(systemName: "square.and.arrow.up")
+                    .foregroundColor(Color(hex: "#3E2449"))
+                Text("Outcome")
                     .font(FontScheme.kWorkSansBold(size: 15))
-                    .foregroundColor(Color(hex: "#DF835F"))
+                    .foregroundColor(Color(hex: "#3E2449"))
                     .padding(.top,2)
             }
-            Button(action: {
-                            dismiss()
-            }) {
-                Image(systemName: "chevron.backward")
-                    .foregroundColor(Color.black)
-            }
-            .frame(width: 30, height: 30)
-            
-            TextField("Income Title", text: $title)
+            TextField("Outcome Title", text: $title)
                 .font(FontScheme.kWorkSansBold(size: 32))
                 .foregroundColor(.black)
 
@@ -57,20 +53,20 @@ struct AddIncomeView: View {
                     HStack {
                         Text(selectedAmount > 0 ? "\(selectedAmount, specifier: "%.2f")$" : "+ Add Money")
                             .fontWeight(.medium)
-                            .foregroundColor(Color(hex: "#DF835F"))
+                            .foregroundColor(Color(hex: "#3E2449"))
                     }
                     .frame(maxWidth: 150)
                     .padding()
                     .background(
                         RoundedRectangle(cornerRadius: 30)
-                            .stroke(Color(hex: "#DF835F"), lineWidth: 1)
+                            .stroke(Color(hex: "#3E2449"), lineWidth: 1)
                     )
                 }
             }
             .sheet(isPresented: $showPopup) {
                 VStack {
                     HStack {
-                        Text("Add money to")
+                        Text("Deduct money from")
                             .font(FontScheme.kWorkSansBold(size: 20))
                             .padding()
                         Spacer()
@@ -81,7 +77,6 @@ struct AddIncomeView: View {
                                 .font(.system(size: 20))
                                 .padding()
                                 .foregroundColor(.black)
-                                
                         }
                     }
                     .padding()
@@ -142,34 +137,32 @@ struct AddIncomeView: View {
                     }
                     .padding(.bottom,20)
                     
-                    Button("Add") {
+                    Button("Deduct") {
                         if let amount = Double(inputAmount) {
                             selectedAmount = amount
                         }
                         showPopup = false
                     }
                     .frame(width: 100, height: 45)
-                    .background(Color(hex: "#DF835F"))
+                    .background(Color(hex: "#3E2449"))
                     .foregroundColor(.white)
                     .cornerRadius(30)
                 }
             }
-            
-                
+
             Button(action: {
                 showPopup1.toggle()
             }) {
                 HStack {
                     Text(selectedCategory != nil ? getCategoryName(by: selectedCategory) : "+ Add Category")
                         .fontWeight(.medium)
-                        .foregroundColor(Color(hex: "#DF835F"))
-
+                        .foregroundColor(Color(hex: "#3E2449"))
                 }
                 .frame(maxWidth: 167)
                 .padding()
                 .background(
                     RoundedRectangle(cornerRadius: 30)
-                        .stroke(Color(hex: "#DF835F"), lineWidth: 1)
+                        .stroke(Color(hex: "#3E2449"), lineWidth: 1)
                 )
             }
             .sheet(isPresented: $showPopup1) {
@@ -194,57 +187,23 @@ struct AddIncomeView: View {
 
                     Button("Done") {
                         showPopup1 = false
+                        fetchBudgetForCategory()
                     }
                     .frame(width: 100, height: 45)
-                    .background(Color(hex: "#DF835F"))
+                    .background(Color(hex: "#3E2449"))
                     .foregroundColor(.white)
                     .cornerRadius(30)
                     .padding(.top)
                 }
                 .padding()
             }
-            HStack(alignment: .top) {
-                Image(systemName: "text.justify")
-                    .foregroundColor(.gray)
-                    .padding(.top, isEditing ? 8 : 0)
-                
-                ZStack(alignment: .topLeading) {
-                    if description.isEmpty && !isEditing {
-                        Text("Add description")
-                            .foregroundColor(.gray)
-                            .font(FontScheme.kWorkSansMedium(size: 14))
-                            .padding(.top, isEditing ? 8 : 0)
-                            .padding(.leading, 4)
-                            .onTapGesture {
-                                withAnimation {
-                                    isEditing = true
-                                }
-                            }
-                    }
-                    if isEditing {
-                        if #available(iOS 16.0, *) {
-                            TextEditor(text: $description)
-                                .foregroundColor(.black)
-                                .font(FontScheme.kWorkSansMedium(size: 14))
-                                .padding(.leading, -4)
-                                .background(Color.clear)
-                                .scrollContentBackground(.hidden)
-                                .frame(height: isEditing ? 120 : 30)
-                                .onTapGesture {
-                                    withAnimation {
-                                        isEditing = false
-                                    }
-                                }
-                        }
-                    }
-                }
-                Spacer()
+
+            // Warning Text
+            if showWarning {
+                Text("Warning: The amount exceeds the budget limit!")
+                    .foregroundColor(.red)
+                    .padding()
             }
-            .frame(maxWidth: .infinity)
-            .padding()
-            .background(Color.gray.opacity(0.1))
-            .cornerRadius(10)
-            .animation(.easeInOut, value: isEditing)
 
 
             HStack {
@@ -270,17 +229,18 @@ struct AddIncomeView: View {
             HStack {
                 Spacer()
                 Button(action: {
-                    handleAddIncome()
+                    handleAddOutcome()
                 }) {
-                    Text("Add Income")
+                    Text("Add Outcome")
                         .fontWeight(.bold)
                         .foregroundColor(.white)
                         .frame(maxWidth: 150)
                         .padding()
-                        .background(Color(hex: "#DF835F"))
+                        .background(Color(hex: "#3E2449"))
                         .cornerRadius(40)
                 }
             }
+            
             .alert(isPresented: $showAlert) {
                 Alert(
                     title: Text("Transfer Status"),
@@ -308,55 +268,65 @@ struct AddIncomeView: View {
                     }
             }
         }
-        .hideNavigationBar()
-        .navigationBarBackButtonHidden(true)
     }
+
+    private func fetchBudgetForCategory() {
+        guard let categoryId = selectedCategory else { return }
+        print(BudgetViewModel().budgetcate)
+        BudgetViewModel().getBudget(bycategoryId: categoryId)
+        self.limit = BudgetViewModel().budgetcate?.budgetLimit ?? 0
+        print(limit)
+        self.cur = BudgetViewModel().budgetcate?.current ?? 0
+    }
+    
     private func appendNumber(_ number: String) {
-            inputAmount += number
+        inputAmount += number
+    }
+
+    private func appendDot() {
+        if !inputAmount.contains(".") {
+            inputAmount += "."
         }
-        private func appendDot() {
-            if !inputAmount.contains(".") {
-                inputAmount += "."
-            }
-        }
-    func handleAddIncome() {
-        IncomeDto = IncomeCreateDto(
+    }
+
+    func handleAddOutcome() {
+        outcomeDto = OutcomeCreateDto(
             title: title,
             description: description,
             amount: Decimal(selectedAmount),
             accountid: accountId ?? 1,
             categoryid: selectedCategory ?? 1
         )
-        print(IncomeDto)
-        guard let IncomeDto = IncomeDto else {
-            print("Income data is incomplete")
+        
+        guard let outcomeDto = outcomeDto else {
+            print("Outcome data is incomplete")
             return
         }
         
-        viewModel.createIncome(income: IncomeDto) { result in
+        viewModel.createOutcome(outcome: outcomeDto) { result in
             DispatchQueue.main.async {
                 switch result {
-                case .success(let Income):
-                    createdIncome = Income
-                    alertMessage = "Income created successfully."
+                case .success(let outcome):
+                    createdOutcome = outcome
+                    alertMessage = "Outcome created successfully."
                     showAlert.toggle()
                 case .failure(let error):
-                    print("Failed to add Income: \(error)")
-                    alertMessage = "Income created successfully."
+                    alertMessage = "Outcome created successfully."
                     showAlert.toggle()
                 }
             }
         }
     }
+
+
     func getCategoryName(by id: Int?) -> String {
         if let id = id, let category = statisticViewModel.categories.first(where: { $0.id == id }) {
             return category.name
         }
         return ""
     }
-
-
 }
+
 #Preview {
-    AddIncomeView()
+    AddOutcomeView()
 }

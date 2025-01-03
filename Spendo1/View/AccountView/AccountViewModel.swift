@@ -1,59 +1,98 @@
 import Foundation
 import SwiftUI
+import Alamofire
 
 class AccountViewModel: ObservableObject {
+    struct Account: Identifiable, Decodable {
+        let id: Int
+        let name: String
+        let balance: Decimal
+    }
+    
     struct AccountItem: Identifiable {
-        let id = UUID()
+        let id : Int
         let icon: String
         let title: String
-        let amount: Float
-        let income: Float
-        let outcome: Float
+        let balance: Decimal
+        let income: Decimal
+        let outcome: Decimal
         let backgroundColor: Color
     }
-    struct TransItem: Identifiable {
-        let id = UUID()
-        let title: String
-        let date: String
-        let amount: Float
-        let color: Color
+    
+    
+    @Published var account: [AccountItem] = []
+    
+    private let baseURL = "http://localhost:5178"
+    
+    func getAccount(completion: @escaping (Result<Void, Error>) -> Void) {
+        let url = "\(baseURL)/Account"
+        
+        AF.request(url, method: .get)
+            .validate()
+            .responseDecodable(of: [Account].self) { response in
+                switch response.result {
+                case .success(let accounts):
+                    DispatchQueue.main.async {
+                        self.account = accounts.enumerated().map { index, item in
+                            let isEven = index % 2 == 0
+                            return AccountItem(
+                                id: item.id,
+                                icon: "dollarsign.circle.fill",
+                                title: item.name,
+                                balance: item.balance,
+                                income: item.balance,
+                                outcome: 0, 
+                                backgroundColor: isEven ? Color(hex: "#3E2449") : Color(hex: "#DF835F")
+                            )
+                        }
+                        completion(.success(()))
+                    }
+                case .failure(let error):
+                    completion(.failure(error))
+                }
+            }
     }
-    let trans: [TransItem]
-    let account: [AccountItem]
+    func deleteAccount(id: Int, completion: @escaping (Result<Void, Error>) -> Void) {
+        let url = "\(baseURL)/Account/\(id)"
+        AF.request(url, method: .delete)
+            .validate()
+            .response { response in
+                switch response.result {
+                case .success:
+                    print("Account deleted successfully")
+                    completion(.success(()))
+                    
+                case .failure(let error):
+                    print("Failed to delete account: \(error.localizedDescription)")
+                    completion(.failure(error))  // Lỗi
+                }
+            }
+    }
+    struct AccountCreateDto: Encodable {
+        let name: String
+        let balance: Decimal
+    }
+    func createAccount(accountName: String, balance: Decimal, completion: @escaping (Result<Account, Error>) -> Void) {
+        let url = "\(baseURL)/Account"
+        
+        let accountInfo = AccountCreateDto(name: accountName, balance: balance)
+        
+        AF.request(url, method: .post, parameters: accountInfo, encoder: JSONParameterEncoder.default)
+            .validate()
+            .responseDecodable(of: Account.self) { response in
+                switch response.result {
+                case .success(let account):
+                    completion(.success(account))
+                case .failure(let error):
+                    if let data = response.data {
+                        if let jsonString = String(data: data, encoding: .utf8) {
+                            print("Raw response data: \(jsonString)")
+                        }
+                    }
+                    completion(.failure(error))
+                }
+            }
 
-    init() {
-        let rawTrans = [
-            ("Mama Bank", "16.11.2024", 1000),
-            ("Dinner", "16.11.2024", -100),
-            ("Mama Bank", "16.11.2024", 1000),
-            ("Dinner", "16.11.2024", -100),
-            ("Mama Bank", "16.11.2024", 1000),
-            ("Dinner", "16.11.2024", -100),
-        ]
-        let rawAccount = [
-            ( "dollarsign.circle.fill" ,"CASH", 1000, 1200, 200),
-            ( "creditcard.fill" ,"VCB", 1000, 1200, 200),
-            ( "dollarsign.circle.fill" ,"CASH", 1000, 1200, 200),
-            ( "creditcard.fill" ,"VCB", 1000, 1200, 200),
-            
-        ]
-        self.account = rawAccount.enumerated().map { index, item in
-            let isEven = index % 2 == 0
-            return AccountItem(
-                icon: item.0,
-                title: item.1,
-                amount: Float(item.2),
-                income: Float(item.3),
-                outcome: Float(item.4),
-                backgroundColor: isEven ? Color(hex: "#3E2449") : Color(hex: "#DF835F")
-            )
-        }
-        self.trans = rawTrans.enumerated().map { index, item in
-            let isRed = Float(item.2) < 0
-            return TransItem(
-                title: item.0,
-                date: item.1,
-                amount: Float(item.2),
-                color: isRed ? .red : .green)}
     }
+    
 }
