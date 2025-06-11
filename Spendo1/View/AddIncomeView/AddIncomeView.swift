@@ -11,8 +11,8 @@ struct AddIncomeView: View {
     @State private var showPopup1 = false
     @State private var selectedAmount: Double = 0
     @State private var inputAmount: String = ""
-    @State private var accountId: Int? = nil
-    @State private var selectedCategory: Int? = nil
+    @State private var accountId: String? = nil
+    @State private var selectedCategory: String? = nil
     @State private var categories: [Category] = []
     @State private var createdIncome: Income? = nil
     @State private var IncomeDto: IncomeCreateDto? = nil
@@ -89,7 +89,7 @@ struct AddIncomeView: View {
                         if !accountViewModel.account.isEmpty {
                             Picker("Account", selection: $accountId) {
                                 ForEach(accountViewModel.account, id: \.id) { account in
-                                    Text(account.title).tag(account.id as Int?)
+                                    Text(account.title).tag(account.id as String?)
                                 }
                             }
                             .pickerStyle(SegmentedPickerStyle())
@@ -182,7 +182,7 @@ struct AddIncomeView: View {
                         if !statisticViewModel.categories.isEmpty {
                             Picker("Category", selection: $selectedCategory) {
                                 ForEach(statisticViewModel.categories, id: \.id) { category in
-                                    Text(category.name).tag(category.id as Int?)
+                                    Text(category.name).tag(category.id as String?)
                                 }
                             }
                             .pickerStyle(WheelPickerStyle())
@@ -324,8 +324,8 @@ struct AddIncomeView: View {
             title: title,
             description: description,
             amount: Decimal(selectedAmount),
-            accountid: accountId ?? 1,
-            categoryid: selectedCategory ?? 1
+            accountid: accountId ?? "",
+            categoryid: selectedCategory ?? ""
         )
         print(IncomeDto)
         guard let IncomeDto = IncomeDto else {
@@ -348,7 +348,7 @@ struct AddIncomeView: View {
             }
         }
     }
-    func getCategoryName(by id: Int?) -> String {
+    func getCategoryName(by id: String?) -> String {
         if let id = id, let category = statisticViewModel.categories.first(where: { $0.id == id }) {
             return category.name
         }

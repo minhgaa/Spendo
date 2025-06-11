@@ -10,7 +10,7 @@ struct TransHisView: View {
     @StateObject private var addOutcomeViewModel = AddOutcomeViewModel()
     
     @State private var selectedTransaction: Transaction? // State to hold the selected transaction
-    var accountIds: [Int]
+    var accountIds: [String]
 
     var body: some View {
         VStack {
@@ -51,7 +51,7 @@ struct TransHisView: View {
         }
     }
 
-    func fetchIncomes(accountIds: [Int]) {
+    func fetchIncomes(accountIds: [String]) {
         isLoading = true
         errorMessage = ""
         let service = addIncomeViewModel
@@ -75,7 +75,7 @@ struct TransHisView: View {
         }
     }
 
-    func fetchOutcomes(accountIds: [Int]) {
+    func fetchOutcomes(accountIds: [String]) {
         isLoading = true
         errorMessage = ""
         let service = addOutcomeViewModel
@@ -113,8 +113,8 @@ struct TransactionRow: View {
     var date: String
     var amount: Decimal
     var description: String?
-    var category: Int
-    var accountid: Int
+    var category: String
+    var accountid: String
     var color: Color
 
     private var formattedTime: String {
@@ -163,11 +163,11 @@ enum TransactionType {
 }
 
 struct Transaction: Identifiable {
-    var id: Int
+    var id: String
     var title: String
     var description: String?
-    var category: Int
-    var accountid: Int
+    var category: String
+    var accountid: String
     var createdat: String
     var amount: Decimal
     var type: TransactionType

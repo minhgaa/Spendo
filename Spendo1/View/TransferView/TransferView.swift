@@ -3,8 +3,8 @@ import SwiftUI
 struct TransferView: View {
     @StateObject private var transferViewModel = TransferViewModel()
     @StateObject private var accountViewModel = AccountViewModel()
-    @State private var sourceAccountId: Int? = nil
-    @State private var targetAccountId: Int? = nil
+    @State private var accountId: String? = nil
+    @State private var targetAccountId: String? = nil
     @State private var description: String = ""
     @State private var transferSuccess: Bool? = nil
     @State private var title: String = ""
@@ -40,9 +40,9 @@ struct TransferView: View {
             Text("From")
                 .font(.headline)
             if !accountViewModel.account.isEmpty {
-                Picker("Source Account", selection: $sourceAccountId) {
+                Picker("Source Account", selection: $accountId) {
                     ForEach(accountViewModel.account, id: \.id) { account in
-                        Text(account.title).tag(account.id as Int?)
+                        Text(account.title).tag(account.id as String?)
                     }
                 }
                 .pickerStyle(SegmentedPickerStyle())
@@ -55,7 +55,7 @@ struct TransferView: View {
             if !accountViewModel.account.isEmpty {
                 Picker("Target Account", selection: $targetAccountId) {
                     ForEach(accountViewModel.account, id: \.id) { account in
-                        Text(account.title).tag(account.id as Int?)
+                        Text(account.title).tag(account.id as String?)
                     }
                 }
                 .pickerStyle(SegmentedPickerStyle())
@@ -260,8 +260,8 @@ struct TransferView: View {
             title: title,
             description: description.isEmpty ? nil : description,
             amount: Decimal(selectedAmount),
-            sourceAccountId: sourceAccountId ?? 0,
-            targetAccountId: targetAccountId ?? 0,
+            accountId: accountId ?? "",
+            targetAccountId: targetAccountId ?? "",
             categoryId: nil
         )
         print(TransferDto)

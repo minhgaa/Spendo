@@ -4,13 +4,13 @@ import Alamofire
 
 class AccountViewModel: ObservableObject {
     struct Account: Identifiable, Decodable {
-        let id: Int
+        let id: String
         let name: String
         let balance: Decimal
     }
     
     struct AccountItem: Identifiable {
-        let id : Int
+        let id : String
         let icon: String
         let title: String
         let balance: Decimal
@@ -22,12 +22,20 @@ class AccountViewModel: ObservableObject {
     
     @Published var account: [AccountItem] = []
     
-    private let baseURL = "http://localhost:5178"
+    private let baseURL = "http://localhost:8080/api/"
     
     func getAccount(completion: @escaping (Result<Void, Error>) -> Void) {
-        let url = "\(baseURL)/Account"
-        
-        AF.request(url, method: .get)
+        let url = "\(baseURL)account"
+
+        var headers: HTTPHeaders = []
+        if let token = UserDefaults.standard.string(forKey: "JWTToken") {
+            headers.add(name: "Authorization", value: "Bearer \(token)")
+            print("🔐 Token sent: Bearer \(token)")
+        } else {
+            print("⚠️ No JWT token found in UserDefaults")
+        }
+
+        AF.request(url, method: .get, headers: headers)
             .validate()
             .responseDecodable(of: [Account].self) { response in
                 switch response.result {
@@ -41,19 +49,25 @@ class AccountViewModel: ObservableObject {
                                 title: item.name,
                                 balance: item.balance,
                                 income: item.balance,
-                                outcome: 0, 
+                                outcome: 0,
                                 backgroundColor: isEven ? Color(hex: "#3E2449") : Color(hex: "#DF835F")
                             )
                         }
                         completion(.success(()))
                     }
+
                 case .failure(let error):
+                    if let data = response.data,
+                       let jsonString = String(data: data, encoding: .utf8) {
+                        print("❌ Raw error response: \(jsonString)")
+                    }
+                    print("❌ Error: \(error.localizedDescription)")
                     completion(.failure(error))
                 }
             }
     }
-    func deleteAccount(id: Int, completion: @escaping (Result<Void, Error>) -> Void) {
-        let url = "\(baseURL)/Account/\(id)"
+    func deleteAccount(id: String, completion: @escaping (Result<Void, Error>) -> Void) {
+        let url = "\(baseURL)/account/\(id)"
         AF.request(url, method: .delete)
             .validate()
             .response { response in
@@ -67,32 +81,6 @@ class AccountViewModel: ObservableObject {
                     completion(.failure(error))  // Lỗi
                 }
             }
-    }
-    struct AccountCreateDto: Encodable {
-        let name: String
-        let balance: Decimal
-    }
-    func createAccount(accountName: String, balance: Decimal, completion: @escaping (Result<Account, Error>) -> Void) {
-        let url = "\(baseURL)/Account"
-        
-        let accountInfo = AccountCreateDto(name: accountName, balance: balance)
-        
-        AF.request(url, method: .post, parameters: accountInfo, encoder: JSONParameterEncoder.default)
-            .validate()
-            .responseDecodable(of: Account.self) { response in
-                switch response.result {
-                case .success(let account):
-                    completion(.success(account))
-                case .failure(let error):
-                    if let data = response.data {
-                        if let jsonString = String(data: data, encoding: .utf8) {
-                            print("Raw response data: \(jsonString)")
-                        }
-                    }
-                    completion(.failure(error))
-                }
-            }
-
     }
     
 }

@@ -6,24 +6,24 @@ struct OutcomeCreateDto: Codable {
     var title: String
     var description: String?
     var amount: Decimal
-    var accountid: Int
-    var categoryid: Int
+    var accountid: String
+    var categoryid: String
 }
 struct Outcome: Codable {
-    var id: Int
+    var id: String
     var title: String
     var description: String?
     var amount: Decimal
-    var accountid: Int
-    var categoryid: Int
+    var accountid: String
+    var categoryid: String
     var createdat: String
 }
 
 class AddOutcomeViewModel: ObservableObject {
     
-    private let baseURL = "http://localhost:5178"
+    private let baseURL = "http://localhost:8080/api"
     func createOutcome(outcome: OutcomeCreateDto, completion: @escaping (Result<Outcome, Error>) -> Void) {
-        let url = "\(baseURL)/Expense"
+        let url = "\(baseURL)/expense"
         
         let parameters: [String: Any] = [
                     "title": outcome.title ?? "",
@@ -50,8 +50,8 @@ class AddOutcomeViewModel: ObservableObject {
             }
     }
     func getOutcomes(
-        accountids: [Int],
-        categoryids: [Int],
+        accountids: [String],
+        categoryids: [String],
         startDate: Date?,
         endDate: Date?,
         completion: @escaping (Result<[Outcome], Error>) -> Void
@@ -77,7 +77,7 @@ class AddOutcomeViewModel: ObservableObject {
         }
 
 
-        let url = "\(baseURL)/Expense"
+        let url = "\(baseURL)/expense"
         AF.request(url, method: .get, parameters: parameters).responseData { response in
             switch response.result {
             case .success(let data):

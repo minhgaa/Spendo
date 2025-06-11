@@ -7,12 +7,12 @@ class StatisticViewModel: ObservableObject {
     @Published var cards: [CardItem] = []
     @Published private var outcomes: [Outcome] = []
     struct Category: Identifiable, Hashable, Decodable {
-        let id: Int
+        let id: String
         let name: String
     }
     
     struct CardItem: Identifiable {
-        let id: Int
+        let id: String
         let icon: String
         let title: String
         let amount: Decimal
@@ -20,14 +20,14 @@ class StatisticViewModel: ObservableObject {
     }
     
     struct CategoryWithAmount {
-        let id: Int
+        let id: String
         let name: String
         let amount: Decimal
     }
     
-    private let baseURL = "http://localhost:5178"
+    private let baseURL = "http://localhost:8080/api"
     
-    func fetchAmount(categoryIds: [Int], completion: @escaping (Result<Decimal, Error>) -> Void) {
+    func fetchAmount(categoryIds: [String], completion: @escaping (Result<Decimal, Error>) -> Void) {
         let service = AddOutcomeViewModel()
         
         service.getOutcomes(
@@ -59,7 +59,7 @@ class StatisticViewModel: ObservableObject {
 
     
     func fetchCategories(completion: @escaping (Result<Void, Error>) -> Void) {
-        let url = "\(baseURL)/Category"
+        let url = "\(baseURL)/category"
         AF.request(url, method: .get)
             .validate()
             .responseDecodable(of: [Category].self) { response in

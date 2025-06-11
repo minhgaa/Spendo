@@ -8,13 +8,13 @@ struct BudgetCreateDto: Codable {
     let startDate: String
     let period: Int
     let budgetLimit: Decimal
-    let categoryId: Int?
-    let userId: Int
+    let categoryId: String?
+    let userId: String
 }
 
 // Model for Budget
 struct Budget: Codable, Identifiable {
-    let id: Int
+    let id: String
     let name: String
     let startDate: String
     let endDate: String
@@ -24,7 +24,7 @@ struct Budget: Codable, Identifiable {
 
 // ViewModel for Budget
 class BudgetViewModel: ObservableObject {
-    private let baseUrl = "http://localhost:5178/Budget"
+    private let baseUrl = "http://localhost:8080/api/budget"
     
     // Published properties to bind data
     @Published var budgets: [Budget] = []
@@ -36,7 +36,7 @@ class BudgetViewModel: ObservableObject {
     private var cancellables = Set<AnyCancellable>()
     
     // Lấy ngân sách theo ID
-    func getBudget(byId id: Int) {
+    func getBudget(byId id: String) {
         isLoading = true
         errorMessage = nil
         
@@ -55,7 +55,7 @@ class BudgetViewModel: ObservableObject {
             }
     }
     
-    func getBudget(bycategoryId categoryid: Int) {
+    func getBudget(bycategoryId categoryid: String) {
         isLoading = true
         errorMessage = nil
 
@@ -116,7 +116,7 @@ class BudgetViewModel: ObservableObject {
     }
 
     
-    func updateBudget(id: Int, budgetInfo: BudgetCreateDto) {
+    func updateBudget(id: String, budgetInfo: BudgetCreateDto) {
         isLoading = true
         errorMessage = nil
         
@@ -136,7 +136,7 @@ class BudgetViewModel: ObservableObject {
     }
     
     // Xóa ngân sách
-    func deleteBudget(id: Int) {
+    func deleteBudget(id: String) {
         isLoading = true
         errorMessage = nil
         

@@ -35,9 +35,7 @@
 		DA38F47C2D227EAF00DE9BA5 /* CardView.swift in Sources */ = {isa = PBXBuildFile; fileRef = DA38F47B2D227EAF00DE9BA5 /* CardView.swift */; };
 		DA38F47E2D227FAB00DE9BA5 /* AddIncomeView.swift in Sources */ = {isa = PBXBuildFile; fileRef = DA38F4442D227D2A00DE9BA5 /* AddIncomeView.swift */; };
 		DA38F47F2D227FAB00DE9BA5 /* AddIncomeViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = DA38F4452D227D2A00DE9BA5 /* AddIncomeViewModel.swift */; };
-		DA5E6C9E2D227302008B774B /* Spendo1Tests.swift in Sources */ = {isa = PBXBuildFile; fileRef = DA5E6C9D2D227302008B774B /* Spendo1Tests.swift */; };
-		DA5E6CA82D227302008B774B /* Spendo1UITests.swift in Sources */ = {isa = PBXBuildFile; fileRef = DA5E6CA72D227302008B774B /* Spendo1UITests.swift */; };
-		DA5E6CAA2D227302008B774B /* Spendo1UITestsLaunchTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = DA5E6CA92D227302008B774B /* Spendo1UITestsLaunchTests.swift */; };
+		DA41D9BA2DF96BCE00D1EF17 /* credentials.plist in Resources */ = {isa = PBXBuildFile; fileRef = DA41D9B92DF96BCE00D1EF17 /* credentials.plist */; };
 		DA9170B32D2560EF00A92DA3 /* AccountDetailView.swift in Sources */ = {isa = PBXBuildFile; fileRef = DA9170B22D2560EF00A92DA3 /* AccountDetailView.swift */; };
 		DA9170B72D256BE100A92DA3 /* AddAccountViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = DA9170B62D256BE100A92DA3 /* AddAccountViewModel.swift */; };
 		DA9170BB2D25A9C600A92DA3 /* AccountSelected.swift in Sources */ = {isa = PBXBuildFile; fileRef = DA9170BA2D25A9C600A92DA3 /* AccountSelected.swift */; };
@@ -73,7 +71,6 @@
 		365E6A4E27C0D37BF0043550 /* Pods_Spendo1.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_Spendo1.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		6A0F748CCD409B16E0308430 /* Pods-Spendo1.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Spendo1.debug.xcconfig"; path = "Target Support Files/Pods-Spendo1/Pods-Spendo1.debug.xcconfig"; sourceTree = "<group>"; };
 		C95BB5BF66385EF1D405EABC /* Pods-Spendo1.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Spendo1.release.xcconfig"; path = "Target Support Files/Pods-Spendo1/Pods-Spendo1.release.xcconfig"; sourceTree = "<group>"; };
-		DA025B422D22A2A5001D55EB /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		DA025B452D22A4AA001D55EB /* LoginView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LoginView.swift; sourceTree = "<group>"; };
 		DA025B4C2D24E649001D55EB /* AddAccountView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AddAccountView.swift; sourceTree = "<group>"; };
 		DA3000CC2D229565003186C2 /* ContentView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ContentView.swift; sourceTree = "<group>"; };
@@ -101,14 +98,13 @@
 		DA38F4712D227E8C00DE9BA5 /* APIExtensions.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = APIExtensions.swift; sourceTree = "<group>"; };
 		DA38F4722D227E8C00DE9BA5 /* EncodableExtension.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = EncodableExtension.swift; sourceTree = "<group>"; };
 		DA38F47B2D227EAF00DE9BA5 /* CardView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CardView.swift; sourceTree = "<group>"; };
+		DA41D9B82DF96BC600D1EF17 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		DA41D9B92DF96BCE00D1EF17 /* credentials.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = credentials.plist; sourceTree = "<group>"; };
 		DA5E6C892D227301008B774B /* Spendo1.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Spendo1.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		DA5E6C902D227302008B774B /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		DA5E6C932D227302008B774B /* Preview Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = "Preview Assets.xcassets"; sourceTree = "<group>"; };
 		DA5E6C992D227302008B774B /* Spendo1Tests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = Spendo1Tests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
-		DA5E6C9D2D227302008B774B /* Spendo1Tests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Spendo1Tests.swift; sourceTree = "<group>"; };
 		DA5E6CA32D227302008B774B /* Spendo1UITests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = Spendo1UITests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
-		DA5E6CA72D227302008B774B /* Spendo1UITests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Spendo1UITests.swift; sourceTree = "<group>"; };
-		DA5E6CA92D227302008B774B /* Spendo1UITestsLaunchTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Spendo1UITestsLaunchTests.swift; sourceTree = "<group>"; };
 		DA9170B22D2560EF00A92DA3 /* AccountDetailView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AccountDetailView.swift; sourceTree = "<group>"; };
 		DA9170B62D256BE100A92DA3 /* AddAccountViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AddAccountViewModel.swift; sourceTree = "<group>"; };
 		DA9170BA2D25A9C600A92DA3 /* AccountSelected.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AccountSelected.swift; sourceTree = "<group>"; };
@@ -273,8 +269,6 @@
 			isa = PBXGroup;
 			children = (
 				DA5E6C8B2D227301008B774B /* Spendo1 */,
-				DA5E6C9C2D227302008B774B /* Spendo1Tests */,
-				DA5E6CA62D227302008B774B /* Spendo1UITests */,
 				DA5E6C8A2D227301008B774B /* Products */,
 				84938C40EA19C62B05474C77 /* Pods */,
 				7C65635B9AB37B9D57617C8E /* Frameworks */,
@@ -294,6 +288,8 @@
 		DA5E6C8B2D227301008B774B /* Spendo1 */ = {
 			isa = PBXGroup;
 			children = (
+				DA41D9B82DF96BC600D1EF17 /* Info.plist */,
+				DA41D9B92DF96BCE00D1EF17 /* credentials.plist */,
 				DA38F47D2D227EB800DE9BA5 /* CustomView */,
 				DA38F46A2D227E7D00DE9BA5 /* APIManager.swift */,
 				DA38F47A2D227E9100DE9BA5 /* Extensions */,
@@ -305,7 +301,6 @@
 				DA5E6C902D227302008B774B /* Assets.xcassets */,
 				DA5E6C922D227302008B774B /* Preview Content */,
 				DA3000CC2D229565003186C2 /* ContentView.swift */,
-				DA025B422D22A2A5001D55EB /* Info.plist */,
 				DA9170BA2D25A9C600A92DA3 /* AccountSelected.swift */,
 			);
 			path = Spendo1;
@@ -317,23 +312,6 @@
 				DA5E6C932D227302008B774B /* Preview Assets.xcassets */,
 			);
 			path = "Preview Content";
-			sourceTree = "<group>";
-		};
-		DA5E6C9C2D227302008B774B /* Spendo1Tests */ = {
-			isa = PBXGroup;
-			children = (
-				DA5E6C9D2D227302008B774B /* Spendo1Tests.swift */,
-			);
-			path = Spendo1Tests;
-			sourceTree = "<group>";
-		};
-		DA5E6CA62D227302008B774B /* Spendo1UITests */ = {
-			isa = PBXGroup;
-			children = (
-				DA5E6CA72D227302008B774B /* Spendo1UITests.swift */,
-				DA5E6CA92D227302008B774B /* Spendo1UITestsLaunchTests.swift */,
-			);
-			path = Spendo1UITests;
 			sourceTree = "<group>";
 		};
 		DA9170B82D256BED00A92DA3 /* AddAccountView */ = {
@@ -479,6 +457,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				DA9170CF2D27AC8C00A92DA3 /* Assets.xcassets in Resources */,
+				DA41D9BA2DF96BCE00D1EF17 /* credentials.plist in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -590,7 +569,6 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				DA5E6C9E2D227302008B774B /* Spendo1Tests.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -598,8 +576,6 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				DA5E6CA82D227302008B774B /* Spendo1UITests.swift in Sources */,
-				DA5E6CAA2D227302008B774B /* Spendo1UITestsLaunchTests.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -805,7 +781,6 @@
 		DA5E6CB12D227302008B774B /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
-				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = YES;
 				BUNDLE_LOADER = "$(TEST_HOST)";
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
@@ -825,7 +800,6 @@
 		DA5E6CB22D227302008B774B /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
-				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = YES;
 				BUNDLE_LOADER = "$(TEST_HOST)";
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
@@ -845,7 +819,6 @@
 		DA5E6CB42D227302008B774B /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
-				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = YES;
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
 				DEVELOPMENT_TEAM = JB8Z9HTB6G;
@@ -863,7 +836,6 @@
 		DA5E6CB52D227302008B774B /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
-				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = YES;
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
 				DEVELOPMENT_TEAM = JB8Z9HTB6G;

@@ -4,7 +4,7 @@ import Alamofire
 
 struct LoginView: View {
     
-    @State private var isLoggedIn = true
+    @State private var isLoggedIn = false
     @State private var email = ""
     @State private var name = ""
     @State private var token = ""
@@ -134,23 +134,6 @@ struct LoginView: View {
         }
     }
 
-    func handleLogin() {
-        APIManager.shared.login(email: email) { result in
-            DispatchQueue.main.async {
-                switch result {
-                case .success(let token):
-                    print("Login successful, Token: \(token)")
-                    self.token = token
-                    self.isLoggedIn = true
-                    UserDefaults.standard.set(token, forKey: "JWTToken")
-                case .failure(let error):
-                    print("Failed to log in: \(error.localizedDescription)")
-                    self.isSelectingCurrency = true
-                }
-            }
-        }
-    }
-
     func handleSignInButton() {
         GIDSignIn.sharedInstance.signIn(withPresenting: UIApplication.shared.windows.first?.rootViewController ?? UIViewController()) { authentication, error in
             if let error = error {
@@ -202,6 +185,7 @@ struct LoginView: View {
             return
         }
         let currencyid = selectedCurrency.id
+        print(name)
         APIManager.shared.registerUser(email: email, name: name, currencyid: currencyid) { result in
             DispatchQueue.main.async {
                 switch result {

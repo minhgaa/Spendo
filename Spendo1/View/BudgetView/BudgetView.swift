@@ -106,7 +106,7 @@ struct CreateBudgetView: View {
     @State private var name = ""
     @State private var startDate = Date()
     @State private var period = 3
-    @State private var categoryId: Int? = nil
+    @State private var categoryId: String? = nil
     @State private var title: String = ""
     @State private var description: String = ""
     @State private var category: String = ""
@@ -115,8 +115,8 @@ struct CreateBudgetView: View {
     @State private var showPopup1 = false
     @State private var selectedAmount: Double = 0
     @State private var inputAmount: String = ""
-    @State private var accountId: Int? = nil
-    @State private var selectedCategory: Int? = nil
+    @State private var accountId: String? = nil
+    @State private var selectedCategory: String? = nil
     @State private var categories: [Category] = []
     @StateObject private var accountViewModel = AccountViewModel()
     @StateObject private var statisticViewModel = StatisticViewModel()
@@ -260,7 +260,7 @@ struct CreateBudgetView: View {
                                 if !statisticViewModel.categories.isEmpty {
                                     Picker("Category", selection: $selectedCategory) {
                                         ForEach(statisticViewModel.categories, id: \.id) { category in
-                                            Text(category.name).tag(category.id as Int?)
+                                            Text(category.name).tag(category.id as String?)
                                         }
                                     }
                                     .pickerStyle(WheelPickerStyle())
@@ -292,7 +292,7 @@ struct CreateBudgetView: View {
                             period: period,
                             budgetLimit: Decimal(selectedAmount),
                             categoryId: categoryId,
-                            userId: 1
+                            userId: ""
                         )
                         viewModel.createBudget(budgetInfo: budgetInfo) {
                                             dismiss()
@@ -320,7 +320,7 @@ struct CreateBudgetView: View {
                 inputAmount += "."
             }
         }
-    func getCategoryName(by id: Int?) -> String {
+    func getCategoryName(by id: String?) -> String {
         if let id = id, let category = statisticViewModel.categories.first(where: { $0.id == id }) {
             return category.name
         }

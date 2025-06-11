@@ -2,25 +2,25 @@ import Foundation
 import Alamofire
 
 struct Transfer: Codable {
-    var id: Int
+    var id: String
     var title: String
     var description: String
     var amount: Decimal
-    var sourceAccountId: Int
-    var targetAccountId: Int
-    var categoryId: Int?
+    var accountId: String
+    var targetAccountId: String
+    var categoryId: String?
 }
 
 struct TransferCreateDto: Codable {
     let title: String?
     let description: String?
     let amount: Decimal
-    let sourceAccountId: Int
-    let targetAccountId: Int
-    let categoryId: Int?
+    let accountId: String
+    let targetAccountId: String
+    let categoryId: String?
 }
 class TransferViewModel: ObservableObject {
-    private let baseUrl = "http://localhost:5178/Transfer"
+    private let baseUrl = "http://localhost:8080/api/transfer"
         
     func createTransfer(transferInfo: TransferCreateDto, completion: @escaping (Result<Transfer, Error>) -> Void) {
         let url = "\(baseUrl)"
@@ -28,7 +28,7 @@ class TransferViewModel: ObservableObject {
             "title": transferInfo.title ?? "",
             "description": transferInfo.description ?? "",
             "amount": transferInfo.amount,
-            "sourceAccountId": transferInfo.sourceAccountId,
+            "accountId": transferInfo.accountId,
             "targetAccountId": transferInfo.targetAccountId,
             "categoryId": transferInfo.categoryId ?? NSNull()
         ]

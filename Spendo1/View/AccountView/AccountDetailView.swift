@@ -160,7 +160,7 @@ struct AccountDetailView: View {
             }
         }
     }
-    func fetchIncomes(accountIds: [Int]) {
+    func fetchIncomes(accountIds: [String]) {
         isLoading = true
         errorMessage = ""
         let service = addIncomeViewModel
@@ -186,7 +186,7 @@ struct AccountDetailView: View {
         }
     }
 
-    func fetchOutcomes(accountIds: [Int]) {
+    func fetchOutcomes(accountIds: [String]) {
         isLoading = true
         errorMessage = ""
         let service = addOutcomeViewModel
@@ -211,7 +211,7 @@ struct AccountDetailView: View {
             }
         }
     }
-    func deleteAccount(id: Int) {
+    func deleteAccount(id: String) {
         errorMessage = nil
         
         accountViewModel.deleteAccount(id: id) { result in
