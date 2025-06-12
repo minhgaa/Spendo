@@ -25,7 +25,7 @@ struct CategorySpending: Codable {
 class StatisticViewModel: ObservableObject {
     @Published var dailySummaries: [DailySummary] = []
     @Published var categorySpending: [CategorySpending] = []
-    @Published var selectedDuration: Int = 7 // Default to week view
+    @Published var selectedDuration: Int = 7
     @Published var isLoading: Bool = false
     @Published var errorMessage: String? = nil
     @Published var cards: [CardItem] = []
@@ -71,6 +71,34 @@ class StatisticViewModel: ObservableObject {
                 }
             }
     }
+    func fetchStatisticsbyYear() {
+        isLoading = true
+        errorMessage = nil
+        
+        let url = "\(baseURL)/statistic/monthly"
+        
+        AF.request(url, method: .get, headers: APIConfig.headers)
+            .validate()
+            .responseDecodable(of: StatisticResponse.self) { [weak self] response in
+                DispatchQueue.main.async {
+                    self?.isLoading = false
+                    
+                    switch response.result {
+                    case .success(let data):
+                        self?.dailySummaries = data.dailySummaries
+                        self?.categorySpending = data.categorySpending
+                        self?.updateCards()
+                        
+                    case .failure(let error):
+                        print("❌ Error fetching statistics: \(error.localizedDescription)")
+                        if let data = response.data, let str = String(data: data, encoding: .utf8) {
+                            print("🔴 Error response body: \(str)")
+                        }
+                        self?.errorMessage = "Không thể tải dữ liệu thống kê: \(error.localizedDescription)"
+                    }
+                }
+            }
+    }
     
     func updateDuration(for tab: String) {
         switch tab {
@@ -78,8 +106,6 @@ class StatisticViewModel: ObservableObject {
             selectedDuration = 7
         case "Month":
             selectedDuration = 30
-        case "Year":
-            selectedDuration = 365
         default:
             selectedDuration = 7
         }

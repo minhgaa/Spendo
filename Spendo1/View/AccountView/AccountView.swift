@@ -32,8 +32,7 @@ struct AccountView: View {
     
     @Environment(\.presentationMode) var presentationMode: Binding<PresentationMode>
     
-    func fetchAccountTransactions(for accountId: String) {
-        // Fetch incomes
+    func fetchIncomeForAccount(_ accountId: String) {
         let url = "http://localhost:8080/api/income"
         let parameters: [String: Any] = ["accountIds": [accountId]]
         
@@ -59,11 +58,13 @@ struct AccountView: View {
                     }
                 }
             }
-
-        // Fetch outcomes
-        let outcomeUrl = "http://localhost:8080/api/expense"
+    }
+    
+    func fetchOutcomeForAccount(_ accountId: String) {
+        let url = "http://localhost:8080/api/expense"
+        let parameters: [String: Any] = ["accountIds": [accountId]]
         
-        AF.request(outcomeUrl, parameters: parameters, headers: APIConfig.headers)
+        AF.request(url, parameters: parameters, headers: APIConfig.headers)
             .validate()
             .responseDecodable(of: [Outcome].self) { response in
                 switch response.result {
@@ -85,6 +86,11 @@ struct AccountView: View {
                     }
                 }
             }
+    }
+    
+    func refreshAccountTransactions(_ accountId: String) {
+        fetchIncomeForAccount(accountId)
+        fetchOutcomeForAccount(accountId)
     }
     
     var body: some View {
@@ -152,7 +158,7 @@ struct AccountView: View {
                                     )
                                 }
                                 .onAppear {
-                                    fetchAccountTransactions(for: account.id)
+                                    refreshAccountTransactions(account.id)
                                 }
                             }
                         }
@@ -183,7 +189,11 @@ struct AccountView: View {
             }
             .onAppear {
                 accountViewModel.getAccount { result in
-                    if case let .failure(error) = result {
+                    if case .success = result {
+                        // Refresh all accounts' transactions
+                        for account in accountViewModel.account {
+                            refreshAccountTransactions(account.id)
+                        }
                     }
                 }
             }
@@ -199,6 +209,7 @@ struct AccountView: View {
         let income: Decimal
         let outcome: Decimal
         let backgroundColor: Color
+        
         var body: some View {
             VStack(alignment: .leading) {
                 HStack {

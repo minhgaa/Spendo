@@ -12,7 +12,6 @@ struct AccountDetailView: View {
     @StateObject private var accountViewModel = AccountViewModel()
     @State private var incomes: [Income] = []
     @State private var outcomes: [Outcome] = []
-    @State private var transfers: [Transfer] = []
     @State private var isLoading: Bool = false
     @StateObject private var addIncomeViewModel = AddIncomeViewModel()
     @StateObject private var addOutcomeViewModel = AddOutcomeViewModel()
@@ -169,15 +168,6 @@ struct AccountDetailView: View {
                                         isIncome: false
                                     )
                                 }
-
-                                ForEach(transfers.sorted(by: { $0.createdAt > $1.createdAt }), id: \.id) { transfer in
-                                    TransactionItemView(
-                                        title: "Transfer to \(transfer.toAccountName)",
-                                        amount: transfer.amount,
-                                        date: formatDate(transfer.createdAt),
-                                        isTransfer: true
-                                    )
-                                }
                             }
                             .padding(.horizontal)
                         }
@@ -194,7 +184,6 @@ struct AccountDetailView: View {
                 if let accountId = accountSelectionManager.selectedAccount?.id {
                     fetchIncomes(accountIds: [accountId])
                     fetchOutcomes(accountIds: [accountId])
-                    fetchTransfers(accountId: accountId)
                 }
             }
             .alert(isPresented: $showDeleteConfirmation) {
@@ -260,28 +249,6 @@ struct AccountDetailView: View {
             }
         }
     }
-
-    func fetchTransfers(accountId: String) {
-        isLoading = true
-        let url = "http://localhost:8080/api/transfer"
-        let parameters: [String: Any] = ["accountIds": [accountId]]
-        
-        AF.request(url, parameters: parameters, headers: APIConfig.headers)
-            .validate()
-            .responseDecodable(of: [Transfer].self) { response in
-                DispatchQueue.main.async {
-                    isLoading = false
-                    switch response.result {
-                    case .success(let fetchedTransfers):
-                        self.transfers = fetchedTransfers
-                    case .failure(let error):
-                        print("Error fetching transfers: \(error)")
-                        debugPrint(error)
-                    }
-                }
-            }
-    }
-
     func deleteAccount(id: String) {
         errorMessage = nil
         
@@ -317,24 +284,15 @@ struct TransactionItemView: View {
     let amount: Decimal
     let date: String
     let isIncome: Bool
-    let isTransfer: Bool
-    
-    init(title: String, amount: Decimal, date: String, isIncome: Bool, isTransfer: Bool = false) {
-        self.title = title
-        self.amount = amount
-        self.date = date
-        self.isIncome = isIncome
-        self.isTransfer = isTransfer
-    }
     
     var body: some View {
         HStack {
             HStack(spacing: 15) {
                 Circle()
-                    .fill(isTransfer ? Color.blue : (isIncome ? Color(hex: "#DF835F") : Color(hex: "#3E2449")))
+                    .fill(isIncome ? Color(hex: "#DF835F") : Color(hex: "#3E2449"))
                     .frame(width: 40, height: 40)
                     .overlay(
-                        Image(systemName: isTransfer ? "arrow.right" : (isIncome ? "arrow.down" : "arrow.up"))
+                        Image(systemName: isIncome ? "arrow.down" : "arrow.up")
                             .foregroundColor(.white)
                             .font(.system(size: 20, weight: .medium))
                     )
@@ -353,7 +311,7 @@ struct TransactionItemView: View {
             
             Text(formatAmount(amount))
                 .font(.system(size: 18, weight: .bold))
-                .foregroundColor(isTransfer ? Color.blue : (isIncome ? Color(hex: "#DF835F") : Color(hex: "#3E2449")))
+                .foregroundColor(isIncome ? Color(hex: "#DF835F") : Color(hex: "#3E2449"))
         }
         .padding(.vertical, 12)
         .padding(.horizontal, 16)
