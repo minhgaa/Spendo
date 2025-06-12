@@ -24,6 +24,7 @@ struct AddOutcomeView: View {
     @State private var showBalanceWarning: Bool = false
     @StateObject private var accountViewModel = AccountViewModel()
     @StateObject private var viewModel = AddOutcomeViewModel()
+    @StateObject private var budgetViewModel = BudgetViewModel()
     @State private var showAlert = false
     @State private var alertMessage = ""
     @Environment(\.presentationMode) var presentationMode
@@ -211,6 +212,12 @@ struct AddOutcomeView: View {
                                 }
                             }
                             .pickerStyle(WheelPickerStyle())
+                            .onChange(of: selectedCategory) { newValue in
+                                print("🔄 Category changed to: \(String(describing: newValue))")
+                                if let categoryId = newValue {
+                                    fetchBudgetForCategory()
+                                }
+                            }
                         } else {
                             Text("Loading categories...")
                         }
@@ -219,6 +226,9 @@ struct AddOutcomeView: View {
 
                     Button("Done") {
                         showPopup1 = false
+                        print("🔍 Checking budget after Done")
+                        print("Selected Category: \(String(describing: selectedCategory))")
+                        print("HasBudget: \(hasBudget), Limit: \(limit), Current: \(cur)")
                         fetchBudgetForCategory()
                     }
                     .frame(width: 100, height: 45)
@@ -228,6 +238,13 @@ struct AddOutcomeView: View {
                     .padding(.top)
                 }
                 .padding()
+                .onAppear {
+                    print("📱 Category picker appeared")
+                    if let categoryId = selectedCategory {
+                        print("Fetching budget for category: \(categoryId)")
+                        fetchBudgetForCategory()
+                    }
+                }
             }
 
             if showWarning && hasBudget {
@@ -315,27 +332,36 @@ struct AddOutcomeView: View {
 
     private func fetchBudgetForCategory() {
         guard let categoryId = selectedCategory else { 
+            print("⚠️ No category selected")
             hasBudget = false
             return 
         }
         
+        print("🎯 Fetching budget for category: \(categoryId)")
         let userId = UserDefaults.standard.string(forKey: "userId") ?? ""
         let budgetVM = BudgetViewModel()
-        budgetVM.getBudget(bycategoryId: categoryId)
         
-        if let budget = budgetVM.budgetcate {
-            self.limit = budget.budgetLimit
-            self.cur = budget.current
-            self.hasBudget = true
-            
-            // Kiểm tra lại với số tiền hiện tại
-            if let amount = Double(inputAmount) {
-                let newTotal = self.cur + Decimal(amount)
-                self.showWarning = newTotal > self.limit
+        budgetVM.getBudget(bycategoryId: categoryId) { result in
+            DispatchQueue.main.async {
+                switch result {
+                case .success(let budget):
+                    self.limit = budget.budgetLimit
+                    self.cur = budget.current
+                    self.hasBudget = true
+                    print("🔵 Budget fetched - Limit: \(self.limit), Current: \(self.cur), HasBudget set to true")
+                    
+                    // Kiểm tra lại với số tiền hiện tại
+                    if let amount = Double(self.inputAmount) {
+                        let newTotal = self.cur + Decimal(amount)
+                        self.showWarning = newTotal > self.limit
+                        print("🔄 Checking budget - Amount: \(amount), NewTotal: \(newTotal), Exceeds Limit: \(self.showWarning)")
+                    }
+                case .failure(let error):
+                    print("⚠️ Error fetching budget: \(error)")
+                    self.hasBudget = false
+                    self.showWarning = false
+                }
             }
-        } else {
-            self.hasBudget = false
-            self.showWarning = false
         }
     }
     
@@ -346,6 +372,7 @@ struct AddOutcomeView: View {
             if hasBudget {
                 let newTotal = cur + Decimal(amount)
                 showWarning = newTotal > limit
+                print("💰 Input changed - Current: \(cur), Amount: \(amount), NewTotal: \(newTotal), Limit: \(limit), ShowWarning: \(showWarning)")
             }
             showBalanceWarning = Decimal(amount) > accountBalance
         }
@@ -364,19 +391,13 @@ struct AddOutcomeView: View {
     }
 
     func handleAddOutcome() {
+        print("📝 Starting handleAddOutcome")
+        print("HasBudget: \(hasBudget), Limit: \(limit), Current: \(cur)")
+        
         if Decimal(selectedAmount) > accountBalance {
             alertMessage = "You don't have enough balance in your account. (Balance: $\(formatDecimal(accountBalance)))"
             showAlert = true
             return
-        }
-
-        if hasBudget {
-            let newTotal = Decimal(selectedAmount)
-            if newTotal > limit {
-                alertMessage = "Warning: This expense will exceed your budget limit. (Limit: $\(formatDecimal(limit)), Current: $\(formatDecimal(Decimal(selectedAmount))))"
-                showAlert = true
-                return
-            }
         }
 
         outcomeDto = OutcomeCreateDto(
@@ -388,20 +409,26 @@ struct AddOutcomeView: View {
         )
         
         guard let outcomeDto = outcomeDto else {
-            print("Outcome data is incomplete")
+            print("❌ Outcome data is incomplete")
             return
         }
         
+        print("✅ Creating outcome with amount: \(selectedAmount)")
         viewModel.createOutcome(outcome: outcomeDto) { result in
             DispatchQueue.main.async {
                 switch result {
                 case .success(let outcome):
-                    createdOutcome = outcome
-                    alertMessage = "Outcome created successfully."
-                    showAlert.toggle()
+                    self.createdOutcome = outcome
+                    self.alertMessage = "Outcome created successfully."
+                    self.showAlert.toggle()
+                    
+                    if let categoryId = self.selectedCategory {
+                        self.budgetViewModel.updateBudgetCurrent(categoryId: categoryId, amount: Decimal(self.selectedAmount))
+                    }
+                    
                 case .failure(let error):
-                    alertMessage = "Failed to create outcome: \(error.localizedDescription)"
-                    showAlert.toggle()
+                    self.alertMessage = "Failed to create outcome: \(error.localizedDescription)"
+                    self.showAlert.toggle()
                 }
             }
         }

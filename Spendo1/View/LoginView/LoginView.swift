@@ -59,7 +59,7 @@ struct LoginView: View {
                                 Button(action: {
                                     self.selectedCurrency = currency
                                 }) {
-                                    Text(currency.name)
+                                    Text(currency.name ?? "")
                                         .padding()
                                         .background(self.selectedCurrency?.id == currency.id ? Color.gray.opacity(0.3) : Color.clear)
                                         .cornerRadius(8)

@@ -76,6 +76,9 @@ struct BudgetListView: View {
             .onAppear {
                 viewModel.getBudgets()
             }
+            .onReceive(NotificationCenter.default.publisher(for: UIApplication.willEnterForegroundNotification)) { _ in
+                viewModel.getBudgets()
+            }
             .alert(item: $selectedBudget) { budget in
                 Alert(
                     title: Text("Delete Confirmation"),

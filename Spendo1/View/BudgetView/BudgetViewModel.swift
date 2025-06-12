@@ -197,21 +197,48 @@ class BudgetViewModel: ObservableObject {
             }
     }
     
-    func getBudget(bycategoryId categoryid: String) {
+    func getBudget(bycategoryId categoryid: String, completion: @escaping (Result<Budget, Error>) -> Void) {
         isLoading = true
         errorMessage = nil
 
-        let url = "\(baseUrl)/category/\(categoryid)"
+        let url = baseUrl
+        let parameters: [String: Any] = ["categoryIds": [categoryid]]
+        
+        print("🔍 Fetching budget for category: \(categoryid)")
+        print("URL: \(url)")
+        print("Parameters: \(parameters)")
 
-        AF.request(url, method: .get , headers: APIConfig.headers)
-            .validate()
-            .responseDecodable(of: Budget.self) { response in
+        AF.request(url, 
+                  method: .get,
+                  parameters: parameters,
+                  headers: APIConfig.headers)
+            
+            .responseDecodable(of: [Budget].self) { response in
                 self.isLoading = false
+                
+                // Log response for debugging
+                print("Response status code: \(response.response?.statusCode ?? -1)")
+                if let data = response.data,
+                   let str = String(data: data, encoding: .utf8) {
+                    print("Response data: \(str)")
+                }
+                
                 switch response.result {
-                case .success(let budget):
-                    self.budgetcate = budget
+                case .success(let budgets):
+                    if let firstBudget = budgets.first {
+                        print("✅ Budget found: \(firstBudget)")
+                        self.budgetcate = firstBudget
+                        completion(.success(firstBudget))
+                    } else {
+                        let error = NSError(domain: "", code: -1, userInfo: [NSLocalizedDescriptionKey: "No budget found for category"])
+                        print("❌ No budget found")
+                        self.errorMessage = "No budget found for category"
+                        completion(.failure(error))
+                    }
                 case .failure(let error):
+                    print("❌ Error fetching budget: \(error)")
                     self.errorMessage = "Error budgets: \(error.localizedDescription)"
+                    completion(.failure(error))
                 }
             }
     }
@@ -229,11 +256,13 @@ class BudgetViewModel: ObservableObject {
                 switch response.result {
                 case .success:
                     self?.getBudget(byId: id)
+                    self?.getBudgets() // Refresh lại danh sách budget
                 case .failure(let error):
                     self?.errorMessage = "Error updating budget: \(error.localizedDescription)"
                 }
             }
     }
+    
     
     func deleteBudget(id: String) {
         isLoading = true
@@ -253,4 +282,26 @@ class BudgetViewModel: ObservableObject {
                 }
             }
     }
+    
+    func updateBudgetCurrent(categoryId: String, amount: Decimal) {
+        guard let budget = budgets.first(where: { $0.categoryId == categoryId }) else {
+            print("❌ Không tìm thấy budget cho category: \(categoryId)")
+            return
+        }
+        
+        print("🔄 Cập nhật current cho budget: \(budget.id)")
+        print("Amount: \(amount)")
+        
+        let budgetInfo = BudgetCreateDto(
+            name: budget.name,
+            startDate: budget.startDate,
+            period: budget.period,
+            budgetLimit: budget.budgetLimit,
+            categoryId: budget.categoryId,
+            userId: UserDefaults.standard.string(forKey: "userId") ?? ""
+        )
+        
+        updateBudget(id: budget.id, budgetInfo: budgetInfo)
+    }
+    
 }

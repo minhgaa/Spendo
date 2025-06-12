@@ -2,10 +2,20 @@ import Alamofire
 import Foundation
 
 struct User: Decodable, Encodable {
+    var id: String?
     var email: String
-    var currencyid: String
     var name: String
+    var createdat: String?
+    var updatedat: String?
+    var currencyId: String?
 }
+
+struct UserCreateDto: Encodable {
+    let email: String
+    let currencyId: String
+    let name: String
+}
+
 struct Account: Decodable {
     let id: String
     let name: String
@@ -15,17 +25,16 @@ struct Account: Decodable {
 
 struct Currency: Identifiable, Decodable {
     var id: String
-    var name: String
-    var code: String
-    var sign: String
+    var name: String?
+    var code: String?
+    var sign: String?
 }
-
-
 
 struct Category: Identifiable, Hashable, Decodable {
     var id: String
     var name: String
 }
+
 struct LoginRequest: Codable {
     let email: String
 }
@@ -138,8 +147,6 @@ class APIManager {
             }
     }
     
-    
-    
     func login(email: String, completion: @escaping (Result<String, Error>) -> Void) {
         let url = "\(baseURL)/user/login"
         let parameters = LoginRequest(email: email)
@@ -160,14 +167,12 @@ class APIManager {
     
     func registerUser(email: String, name: String, currencyid: String, completion: @escaping (Result<User, Error>) -> Void) {
         let url = "\(baseURL)/user/signup"
-        let user = User(email: email, currencyid: currencyid, name: name)
+        let userDto = UserCreateDto(email: email, currencyId: currencyid, name: name)
         
-        var headers: HTTPHeaders = [:]
-        
-        // Lấy token nếu có
-        if let token = UserDefaults.standard.string(forKey: "JWTToken") {
-            headers.add(name: "Authorization", value: "Bearer \(token)")
-        }
+        let headers: HTTPHeaders = [
+            "Content-Type": "application/json",
+            "Accept": "application/json"
+        ]
 
         print("🔵 Registering user with payload:")
         print("Email: \(email)")
@@ -175,7 +180,7 @@ class APIManager {
         print("CurrencyID: \(currencyid)")
         print("URL: \(url)")
         
-        AF.request(url, method: .post, parameters: user, encoder: JSONParameterEncoder.default, headers: headers)
+        AF.request(url, method: .post, parameters: userDto, encoder: JSONParameterEncoder.default, headers: headers)
             .validate()
             .responseDecodable(of: User.self) { response in
                 debugPrint(response)
@@ -196,6 +201,10 @@ class APIManager {
                     completion(.success(newUser))
                 case .failure(let error):
                     print("❌ Register error: \(error.localizedDescription)")
+                    if let data = response.data,
+                       let errorString = String(data: data, encoding: .utf8) {
+                        print("Error response body: \(errorString)")
+                    }
                     completion(.failure(error))
                 }
             }
