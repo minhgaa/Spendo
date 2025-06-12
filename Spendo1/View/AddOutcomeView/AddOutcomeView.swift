@@ -1,4 +1,5 @@
 import SwiftUI
+import Alamofire
 
 struct AddOutcomeView: View {
     @State private var title: String = ""
@@ -19,14 +20,26 @@ struct AddOutcomeView: View {
     @State private var outcomeDto: OutcomeCreateDto? = nil
     @State private var budget: Budget? = nil
     @State private var showWarning: Bool = false
+    @State private var accountBalance: Decimal = 0
+    @State private var showBalanceWarning: Bool = false
     @StateObject private var accountViewModel = AccountViewModel()
-    @StateObject private var statisticViewModel = StatisticViewModel()
     @StateObject private var viewModel = AddOutcomeViewModel()
-    @State private var showAlert = false // Để hiển thị Alert
+    @State private var showAlert = false
     @State private var alertMessage = ""
     @Environment(\.presentationMode) var presentationMode
+    @State private var hasBudget: Bool = false
     
-
+    // MARK: - Category Data
+    struct Category: Identifiable, Hashable, Decodable {
+        let id: String
+        let name: String
+    }
+    @State private var categoryList: [Category] = []
+    
+    private func formatDecimal(_ value: Decimal) -> String {
+        return String(format: "%.2f", NSDecimalNumber(decimal: value).doubleValue)
+    }
+    
     var body: some View {
         VStack(alignment: .leading, spacing: 20) {
             HStack {
@@ -51,7 +64,7 @@ struct AddOutcomeView: View {
                     showPopup.toggle()
                 }) {
                     HStack {
-                        Text(selectedAmount > 0 ? "\(selectedAmount, specifier: "%.2f")$" : "+ Add Money")
+                        Text(selectedAmount > 0 ? "$\(String(format: "%.2f", selectedAmount))" : "+ Add Money")
                             .fontWeight(.medium)
                             .foregroundColor(Color(hex: "#3E2449"))
                     }
@@ -88,17 +101,36 @@ struct AddOutcomeView: View {
                                 }
                             }
                             .pickerStyle(SegmentedPickerStyle())
+                            .onChange(of: accountId) { newValue in
+                                if let id = newValue,
+                                   let account = accountViewModel.account.first(where: { $0.id == id }) {
+                                    accountBalance = account.balance
+                                    checkBalanceWarning()
+                                }
+                            }
                         } else {
                             Text("Loading accounts...")
                         }
                     }
                     .padding()
+                    
+                    if let selectedAccountId = accountId,
+                       let account = accountViewModel.account.first(where: { $0.id == selectedAccountId }) {
+                        Text("Available balance: $\(formatDecimal(account.balance))")
+                            .font(FontScheme.kWorkSansRegular(size: 14))
+                            .foregroundColor(.gray)
+                    }
+                    
+                    if showBalanceWarning {
+                        Text("Warning: Amount exceeds account balance!")
+                            .font(FontScheme.kWorkSansRegular(size: 14))
+                            .foregroundColor(.red)
+                            .padding()
+                    }
+                    
                     HStack{
-                        Text(inputAmount.isEmpty ? "0" : inputAmount)
+                        Text(inputAmount.isEmpty ? "$0.00" : "$\(inputAmount)")
                             .font(FontScheme.kWorkSansSemiBold(size: 36))
-                            
-                        Text("$")
-                            .font(FontScheme.kWorkSansRegular(size: 36))
                     }
                     .padding()
                     
@@ -172,9 +204,9 @@ struct AddOutcomeView: View {
                         .padding()
 
                     HStack{
-                        if !statisticViewModel.categories.isEmpty {
+                        if !categoryList.isEmpty {
                             Picker("Category", selection: $selectedCategory) {
-                                ForEach(statisticViewModel.categories, id: \.id) { category in
+                                ForEach(categoryList, id: \.id) { category in
                                     Text(category.name).tag(category.id as String?)
                                 }
                             }
@@ -198,13 +230,17 @@ struct AddOutcomeView: View {
                 .padding()
             }
 
-            // Warning Text
-            if showWarning {
-                Text("Warning: The amount exceeds the budget limit!")
+            if showWarning && hasBudget {
+                Text("Warning: The amount exceeds the budget limit! (Limit: $\(formatDecimal(limit)), Current: $\(formatDecimal(cur)))")
                     .foregroundColor(.red)
                     .padding()
             }
 
+            if showBalanceWarning {
+                Text("Warning: The amount exceeds the account balance! (Balance: $\(formatDecimal(accountBalance)))")
+                    .foregroundColor(.red)
+                    .padding()
+            }
 
             HStack {
                 Image(systemName: "calendar")
@@ -240,13 +276,11 @@ struct AddOutcomeView: View {
                         .cornerRadius(40)
                 }
             }
-            
             .alert(isPresented: $showAlert) {
                 Alert(
                     title: Text("Transfer Status"),
                     message: Text(alertMessage),
                     dismissButton: .default(Text("OK"), action: {
-                        // Quay lại trang trước khi nhấn OK
                         presentationMode.wrappedValue.dismiss()
                     })
                 )
@@ -261,26 +295,60 @@ struct AddOutcomeView: View {
                     print("Failed to load accounts: \(error)")
                 }
             }
-            statisticViewModel.fetchCategories {
-                result in
-                    if case .failure(let error) = result {
-                        print("Failed to load categories: \(error)")
-                    }
-            }
+            fetchCategories()
         }
     }
 
+    private func fetchCategories() {
+        let url = "http://localhost:8080/api/category"
+        AF.request(url, method: .get, headers: APIConfig.headers)
+            .validate()
+            .responseDecodable(of: [Category].self) { response in
+                switch response.result {
+                case .success(let categories):
+                    self.categoryList = categories
+                case .failure(let error):
+                    print("Failed to load categories: \(error)")
+                }
+            }
+    }
+
     private func fetchBudgetForCategory() {
-        guard let categoryId = selectedCategory else { return }
-        print(BudgetViewModel().budgetcate)
-        BudgetViewModel().getBudget(bycategoryId: categoryId)
-        self.limit = BudgetViewModel().budgetcate?.budgetLimit ?? 0
-        print(limit)
-        self.cur = BudgetViewModel().budgetcate?.current ?? 0
+        guard let categoryId = selectedCategory else { 
+            hasBudget = false
+            return 
+        }
+        
+        let userId = UserDefaults.standard.string(forKey: "userId") ?? ""
+        let budgetVM = BudgetViewModel()
+        budgetVM.getBudget(bycategoryId: categoryId)
+        
+        if let budget = budgetVM.budgetcate {
+            self.limit = budget.budgetLimit
+            self.cur = budget.current
+            self.hasBudget = true
+            
+            // Kiểm tra lại với số tiền hiện tại
+            if let amount = Double(inputAmount) {
+                let newTotal = self.cur + Decimal(amount)
+                self.showWarning = newTotal > self.limit
+            }
+        } else {
+            self.hasBudget = false
+            self.showWarning = false
+        }
     }
     
     private func appendNumber(_ number: String) {
         inputAmount += number
+        if let amount = Double(inputAmount) {
+            selectedAmount = amount
+            if hasBudget {
+                let newTotal = cur + Decimal(amount)
+                showWarning = newTotal > limit
+            }
+            showBalanceWarning = Decimal(amount) > accountBalance
+        }
     }
 
     private func appendDot() {
@@ -289,13 +357,34 @@ struct AddOutcomeView: View {
         }
     }
 
+    private func checkBalanceWarning() {
+        if let amount = Double(inputAmount) {
+            showBalanceWarning = Decimal(amount) > accountBalance
+        }
+    }
+
     func handleAddOutcome() {
+        if Decimal(selectedAmount) > accountBalance {
+            alertMessage = "You don't have enough balance in your account. (Balance: $\(formatDecimal(accountBalance)))"
+            showAlert = true
+            return
+        }
+
+        if hasBudget {
+            let newTotal = Decimal(selectedAmount)
+            if newTotal > limit {
+                alertMessage = "Warning: This expense will exceed your budget limit. (Limit: $\(formatDecimal(limit)), Current: $\(formatDecimal(Decimal(selectedAmount))))"
+                showAlert = true
+                return
+            }
+        }
+
         outcomeDto = OutcomeCreateDto(
             title: title,
             description: description,
             amount: Decimal(selectedAmount),
-            accountid: accountId ?? "",
-            categoryid: selectedCategory ?? ""
+            accountId: accountId ?? "",
+            categoryId: selectedCategory ?? ""
         )
         
         guard let outcomeDto = outcomeDto else {
@@ -311,16 +400,15 @@ struct AddOutcomeView: View {
                     alertMessage = "Outcome created successfully."
                     showAlert.toggle()
                 case .failure(let error):
-                    alertMessage = "Outcome created successfully."
+                    alertMessage = "Failed to create outcome: \(error.localizedDescription)"
                     showAlert.toggle()
                 }
             }
         }
     }
 
-
     func getCategoryName(by id: String?) -> String {
-        if let id = id, let category = statisticViewModel.categories.first(where: { $0.id == id }) {
+        if let id = id, let category = categoryList.first(where: { $0.id == id }) {
             return category.name
         }
         return ""

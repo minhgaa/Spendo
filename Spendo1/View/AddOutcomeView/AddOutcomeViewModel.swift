@@ -2,22 +2,27 @@ import Foundation
 import Combine
 import Alamofire
 
+
 struct OutcomeCreateDto: Codable {
     var title: String
     var description: String?
     var amount: Decimal
-    var accountid: String
-    var categoryid: String
+    var accountId: String
+    var categoryId: String
 }
 struct Outcome: Codable {
-    var id: String
-    var title: String
-    var description: String?
-    var amount: Decimal
-    var accountid: String
-    var categoryid: String
-    var createdat: String
+    let id: String
+    let title: String
+    let description: String?
+    let amount: Decimal
+    let createdAt: String
+    let updatedAt: String
+    let accountId: String
+    let accountName: String?
+    let categoryId: String?
+    let categoryName: String?
 }
+
 
 class AddOutcomeViewModel: ObservableObject {
     
@@ -29,11 +34,11 @@ class AddOutcomeViewModel: ObservableObject {
                     "title": outcome.title ?? "",
                     "description": outcome.description ?? "",
                     "amount": outcome.amount,
-                    "accountid": outcome.accountid,
-                    "categoryid": outcome.categoryid ?? NSNull()
+                    "accountId": outcome.accountId,
+                    "categoryId": outcome.categoryId ?? NSNull()
                 ]
         
-        AF.request(url, method: .post, parameters: parameters, encoding: JSONEncoding.default)
+        AF.request(url, method: .post, parameters: parameters, encoding: JSONEncoding.default, headers:APIConfig.headers)
             .validate()
             .responseDecodable(of: Outcome.self) { response in
                 switch response.result {
@@ -50,23 +55,25 @@ class AddOutcomeViewModel: ObservableObject {
             }
     }
     func getOutcomes(
-        accountids: [String],
-        categoryids: [String],
+        accountIds: [String],
+        categoryIds: [String],
         startDate: Date?,
         endDate: Date?,
         completion: @escaping (Result<[Outcome], Error>) -> Void
     ) {
         var parameters: [String: Any] = [:]
 
-        if !accountids.isEmpty {
-            parameters["accountids"] = accountids.map { String($0) }
+        if !accountIds.isEmpty {
+            parameters["accountids"] = accountIds.map { String($0) }
         }
 
-        if !categoryids.isEmpty {
-            parameters["categoryids"] = categoryids.map { String($0) }
+        if !categoryIds.isEmpty {
+            parameters["categoryIds"] = categoryIds.map { String($0) }
         }
 
-        let formatter = ISO8601DateFormatter()
+        let formatter = DateFormatter()
+        formatter.dateFormat = "yyyy-MM-dd"
+        formatter.timeZone = TimeZone.current
 
         if let startDate = startDate {
             parameters["startDate"] = formatter.string(from: startDate)
@@ -76,20 +83,22 @@ class AddOutcomeViewModel: ObservableObject {
             parameters["endDate"] = formatter.string(from: endDate)
         }
 
-
         let url = "\(baseURL)/expense"
-        AF.request(url, method: .get, parameters: parameters).responseData { response in
+        AF.request(url, method: .get, parameters: parameters, headers: APIConfig.headers).responseData { response in
             switch response.result {
             case .success(let data):
                 if let jsonString = String(data: data, encoding: .utf8) {
+                    print("📥 Raw response data: \(jsonString)")
                 }
                 do {
                     let outcomes = try JSONDecoder().decode([Outcome].self, from: data)
                     completion(.success(outcomes))
                 } catch {
+                    print("❌ Decoding error: \(error)")
                     completion(.failure(error))
                 }
             case .failure(let error):
+                print("❌ Network error: \(error)")
                 completion(.failure(error))
             }
         }

@@ -4,21 +4,25 @@ import Alamofire
 struct AccountDetailView: View {
     @Binding var isPresented: Bool
     @State private var errorMessage: String? = nil
+    @State private var showDeleteConfirmation = false
+    @State private var totalIncome: Decimal = 0
+    @State private var totalOutcome: Decimal = 0
     @Environment(\.presentationMode) var presentationMode
     @EnvironmentObject var accountSelectionManager: AccountSelectionManager
     @StateObject private var accountViewModel = AccountViewModel()
     @State private var incomes: [Income] = []
     @State private var outcomes: [Outcome] = []
+    @State private var transfers: [Transfer] = []
     @State private var isLoading: Bool = false
     @StateObject private var addIncomeViewModel = AddIncomeViewModel()
     @StateObject private var addOutcomeViewModel = AddOutcomeViewModel()
     
     var body: some View {
         if let account = accountSelectionManager.selectedAccount {
-            VStack(alignment: .leading, spacing: 20) {
+            VStack(alignment: .leading, spacing: 10) {
                 HStack {
                     Button(action: {
-                        deleteAccount(id: account.id) 
+                        showDeleteConfirmation = true
                     }) {
                         Image(systemName: "trash.fill")
                             .font(.system(size: 20))
@@ -39,7 +43,8 @@ struct AccountDetailView: View {
                             .foregroundColor(.black)
                     }
                 }
-                .padding()
+                .padding(.vertical)
+                .padding(.top)
                 
                 Text(account.title)
                     .font(FontScheme.kWorkSansBold(size: 25))
@@ -62,10 +67,10 @@ struct AccountDetailView: View {
                         Text("INCOME")
                             .font(FontScheme.kWorkSansBold(size: 17))
                             .foregroundColor(.white)
-                            .padding(.bottom,20)
-                            .padding(.top,30)
+                            .padding(.bottom,10)
+                            .padding(.top,20)
                         VStack(alignment: .center) {
-                            Text(String(format: "%.2f", NSDecimalNumber(decimal: account.income).doubleValue))
+                            Text(String(format: "%.2f", NSDecimalNumber(decimal: totalIncome).doubleValue))
                                 .font(FontScheme.kWorkSansBold(size: 32))
                                 .foregroundColor(.white)
                             Text("VND")
@@ -74,7 +79,7 @@ struct AccountDetailView: View {
                         }
                         .padding(.bottom,10)
                         VStack(alignment: .center) {
-                            Text("1")
+                            Text("\(incomes.count)")
                                 .font(FontScheme.kWorkSansBold(size: 32))
                                 .foregroundColor(.white)
                             Text("Transactions")
@@ -83,17 +88,9 @@ struct AccountDetailView: View {
                         }
                         .padding(.bottom,10)
                         Spacer()
-                        Button(action:{} ) {
-                            Text("Add Income")
-                                .foregroundColor(Color(hex: "#DF835F"))
-                        }
-                        .frame(width: 150, height: 50)
-                        .background(RoundedCorners(topLeft: 40.0, topRight: 40.0,
-                                                   bottomLeft: 40, bottomRight: 40)
-                            .fill(Color.white))
-                        .padding(.bottom)
+                        
                     }
-                    .frame(width: 170, height: 300)
+                    .frame(width: 170, height: 200)
                     .background(RoundedCorners(topLeft: 40.0, topRight: 40.0,
                                                bottomLeft: 40, bottomRight: 40)
                         .fill(Color(hex: "#DF835F")))
@@ -103,10 +100,11 @@ struct AccountDetailView: View {
                         Text("OUTCOME")
                             .font(FontScheme.kWorkSansBold(size: 17))
                             .foregroundColor(.white)
-                            .padding(.bottom,20)
-                            .padding(.top,30)
+                            .padding(.bottom,10)
+                            .padding(.top,20)
                         VStack(alignment: .center) {
-                            Text(String(format: "%.2f", NSDecimalNumber(decimal: account.outcome).doubleValue))                                .font(FontScheme.kWorkSansBold(size: 32))
+                            Text(String(format: "%.2f", NSDecimalNumber(decimal: totalOutcome).doubleValue))
+                                .font(FontScheme.kWorkSansBold(size: 32))
                                 .foregroundColor(.white)
                             Text("VND")
                                 .font(FontScheme.kWorkSansBold(size: 15))
@@ -114,7 +112,7 @@ struct AccountDetailView: View {
                         }
                         .padding(.bottom,10)
                         VStack(alignment: .center) {
-                            Text("1")
+                            Text("\(outcomes.count)")
                                 .font(FontScheme.kWorkSansBold(size: 32))
                                 .foregroundColor(.white)
                             Text("Transactions")
@@ -123,17 +121,8 @@ struct AccountDetailView: View {
                         }
                         .padding(.bottom,10)
                         Spacer()
-                        Button(action:{} ) {
-                            Text("Add Outcome")
-                                .foregroundColor(Color(hex: "#3E2449"))
-                        }
-                        .frame(width: 150, height: 50)
-                        .background(RoundedCorners(topLeft: 40.0, topRight: 40.0,
-                                                   bottomLeft: 40, bottomRight: 40)
-                            .fill(Color.white))
-                        .padding(.bottom)
                     }
-                    .frame(width: 170, height: 300)
+                    .frame(width: 170, height: 200)
                     .background(RoundedCorners(topLeft: 40.0, topRight: 40.0,
                                                bottomLeft: 40, bottomRight: 40)
                         .fill(Color(hex: "#3E2449")))
@@ -144,8 +133,59 @@ struct AccountDetailView: View {
                     Text(errorMessage)
                         .font(.body)
                         .foregroundColor(.red)
-                        .padding(.top, 10)
                 }
+
+                // Add Transaction History Section
+                VStack(alignment: .leading, spacing: 15) {
+                    Text("Transaction History")
+                        .font(FontScheme.kWorkSansBold(size: 24))
+                        .foregroundColor(Color(hex: "#3E2449"))
+                        .padding(.top, 20)
+                        .padding(.horizontal)
+
+                    if isLoading {
+                        ProgressView()
+                            .progressViewStyle(CircularProgressViewStyle())
+                            .scaleEffect(1.2)
+                            .frame(maxWidth: .infinity, alignment: .center)
+                            .padding()
+                    } else {
+                        ScrollView {
+                            LazyVStack(spacing: 16) {
+                                ForEach(incomes.sorted(by: { $0.createdAt > $1.createdAt }), id: \.id) { income in
+                                    TransactionItemView(
+                                        title: income.title,
+                                        amount: income.amount,
+                                        date: formatDate(income.createdAt),
+                                        isIncome: true
+                                    )
+                                }
+                                
+                                ForEach(outcomes.sorted(by: { $0.createdAt > $1.createdAt }), id: \.id) { outcome in
+                                    TransactionItemView(
+                                        title: outcome.title,
+                                        amount: outcome.amount,
+                                        date: formatDate(outcome.createdAt),
+                                        isIncome: false
+                                    )
+                                }
+
+                                ForEach(transfers.sorted(by: { $0.createdAt > $1.createdAt }), id: \.id) { transfer in
+                                    TransactionItemView(
+                                        title: "Transfer to \(transfer.toAccountName)",
+                                        amount: transfer.amount,
+                                        date: formatDate(transfer.createdAt),
+                                        isTransfer: true
+                                    )
+                                }
+                            }
+                            .padding(.horizontal)
+                        }
+                        .frame(maxHeight: 400)
+                    }
+                }
+                .background(Color(hex: "#F6F6F6"))
+                .cornerRadius(20)
                 
             }
             .padding()
@@ -154,9 +194,18 @@ struct AccountDetailView: View {
                 if let accountId = accountSelectionManager.selectedAccount?.id {
                     fetchIncomes(accountIds: [accountId])
                     fetchOutcomes(accountIds: [accountId])
-                } else {
-                    TransHisView(accountIds: [])
+                    fetchTransfers(accountId: accountId)
                 }
+            }
+            .alert(isPresented: $showDeleteConfirmation) {
+                Alert(
+                    title: Text("Delete Confirmation"),
+                    message: Text("Are you sure you want to delete account \"\(account.title)\"?"),
+                    primaryButton: .destructive(Text("Delete")) {
+                        deleteAccount(id: account.id)
+                    },
+                    secondaryButton: .cancel(Text("Cancel"))
+                )
             }
         }
     }
@@ -175,9 +224,9 @@ struct AccountDetailView: View {
                 isLoading = false
                 switch result {
                 case .success(let fetchedIncomes):
-                    incomes = fetchedIncomes
-                    let totalIncome = incomes.reduce(0) { $0 + $1.amount }
-                    print("Total Income: \(totalIncome)")
+                    self.incomes = fetchedIncomes
+                    self.totalIncome = fetchedIncomes.reduce(Decimal(0)) { $0 + $1.amount }
+                    print("Total Income: \(self.totalIncome)")
                 case .failure(let error):
                     print("Error: \(error.localizedDescription)")
                     debugPrint(error)
@@ -192,8 +241,8 @@ struct AccountDetailView: View {
         let service = addOutcomeViewModel
         
         service.getOutcomes(
-            accountids: accountIds,
-            categoryids: [],
+            accountIds: accountIds,
+            categoryIds: [],
             startDate: nil,
             endDate: nil
         ) { result in
@@ -201,9 +250,9 @@ struct AccountDetailView: View {
                 isLoading = false
                 switch result {
                 case .success(let fetchedOutcomes):
-                    outcomes = fetchedOutcomes
-                    let totalOutcome = outcomes.reduce(0) { $0 + $1.amount }
-                    print("Total Outcome: \(totalOutcome)")
+                    self.outcomes = fetchedOutcomes
+                    self.totalOutcome = fetchedOutcomes.reduce(Decimal(0)) { $0 + $1.amount }
+                    print("Total Outcome: \(self.totalOutcome)")
                 case .failure(let error):
                     print("Error: \(error.localizedDescription)")
                     debugPrint(error)
@@ -211,6 +260,28 @@ struct AccountDetailView: View {
             }
         }
     }
+
+    func fetchTransfers(accountId: String) {
+        isLoading = true
+        let url = "http://localhost:8080/api/transfer"
+        let parameters: [String: Any] = ["accountIds": [accountId]]
+        
+        AF.request(url, parameters: parameters, headers: APIConfig.headers)
+            .validate()
+            .responseDecodable(of: [Transfer].self) { response in
+                DispatchQueue.main.async {
+                    isLoading = false
+                    switch response.result {
+                    case .success(let fetchedTransfers):
+                        self.transfers = fetchedTransfers
+                    case .failure(let error):
+                        print("Error fetching transfers: \(error)")
+                        debugPrint(error)
+                    }
+                }
+            }
+    }
+
     func deleteAccount(id: String) {
         errorMessage = nil
         
@@ -228,4 +299,75 @@ struct AccountDetailView: View {
         }
     }
 
+    private func formatDate(_ dateString: String) -> String {
+        let inputFormatter = DateFormatter()
+        inputFormatter.dateFormat = "yyyy-MM-dd'T'HH:mm:ss.SSSZ"
+        
+        if let date = inputFormatter.date(from: dateString) {
+            let outputFormatter = DateFormatter()
+            outputFormatter.dateFormat = "dd/MM/yyyy HH:mm"
+            return outputFormatter.string(from: date)
+        }
+        return dateString
+    }
+}
+
+struct TransactionItemView: View {
+    let title: String
+    let amount: Decimal
+    let date: String
+    let isIncome: Bool
+    let isTransfer: Bool
+    
+    init(title: String, amount: Decimal, date: String, isIncome: Bool, isTransfer: Bool = false) {
+        self.title = title
+        self.amount = amount
+        self.date = date
+        self.isIncome = isIncome
+        self.isTransfer = isTransfer
+    }
+    
+    var body: some View {
+        HStack {
+            HStack(spacing: 15) {
+                Circle()
+                    .fill(isTransfer ? Color.blue : (isIncome ? Color(hex: "#DF835F") : Color(hex: "#3E2449")))
+                    .frame(width: 40, height: 40)
+                    .overlay(
+                        Image(systemName: isTransfer ? "arrow.right" : (isIncome ? "arrow.down" : "arrow.up"))
+                            .foregroundColor(.white)
+                            .font(.system(size: 20, weight: .medium))
+                    )
+                
+                VStack(alignment: .leading, spacing: 6) {
+                    Text(title)
+                        .font(.system(size: 18, weight: .semibold))
+                        .foregroundColor(.black)
+                    Text(date)
+                        .font(.system(size: 14))
+                        .foregroundColor(.gray)
+                }
+            }
+            
+            Spacer()
+            
+            Text(formatAmount(amount))
+                .font(.system(size: 18, weight: .bold))
+                .foregroundColor(isTransfer ? Color.blue : (isIncome ? Color(hex: "#DF835F") : Color(hex: "#3E2449")))
+        }
+        .padding(.vertical, 12)
+        .padding(.horizontal, 16)
+        .background(Color.white)
+        .cornerRadius(16)
+        .shadow(color: Color.black.opacity(0.05), radius: 4, x: 0, y: 2)
+    }
+    
+    private func formatAmount(_ amount: Decimal) -> String {
+        let formatter = NumberFormatter()
+        formatter.numberStyle = .decimal
+        formatter.minimumFractionDigits = 2
+        formatter.maximumFractionDigits = 2
+        let amountString = formatter.string(from: NSDecimalNumber(decimal: abs(amount))) ?? "0.00"
+        return isIncome ? "+\(amountString)" : "-\(amountString)"
+    }
 }

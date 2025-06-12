@@ -1,4 +1,5 @@
 import SwiftUI
+import Alamofire
 
 struct AccountView: View {
     @StateObject var accountViewModel = AccountViewModel()
@@ -9,11 +10,82 @@ struct AccountView: View {
     @State private var outcomes: [Outcome] = []
     @State private var errorMessage: String = ""
     @State private var isLoading: Bool = false
+    @State private var accountTotals: [String: (income: Decimal, outcome: Decimal)] = [:]
     @StateObject private var addIncomeViewModel = AddIncomeViewModel()
     @StateObject private var addOutcomeViewModel = AddOutcomeViewModel()
     @StateObject private var accountSelectionManager = AccountSelectionManager()
     
+    private var startDate: Date {
+        // Lấy ngày đầu tiên của tháng hiện tại
+        let calendar = Calendar.current
+        let components = calendar.dateComponents([.year, .month], from: Date())
+        return calendar.date(from: components) ?? Date()
+    }
+    
+    private var endDate: Date {
+        // Lấy ngày cuối cùng của tháng hiện tại
+        let calendar = Calendar.current
+        let nextMonth = calendar.date(byAdding: .month, value: 1, to: startDate) ?? Date()
+        let endOfMonth = calendar.date(byAdding: .day, value: -1, to: nextMonth) ?? Date()
+        return endOfMonth
+    }
+    
     @Environment(\.presentationMode) var presentationMode: Binding<PresentationMode>
+    
+    func fetchAccountTransactions(for accountId: String) {
+        // Fetch incomes
+        let url = "http://localhost:8080/api/income"
+        let parameters: [String: Any] = ["accountIds": [accountId]]
+        
+        AF.request(url, parameters: parameters, headers: APIConfig.headers)
+            .validate()
+            .responseDecodable(of: [Income].self) { response in
+                switch response.result {
+                case .success(let incomes):
+                    let totalIncome = incomes.reduce(Decimal(0)) { $0 + $1.amount }
+                    DispatchQueue.main.async {
+                        if var current = self.accountTotals[accountId] {
+                            current.income = totalIncome
+                            self.accountTotals[accountId] = current
+                        } else {
+                            self.accountTotals[accountId] = (income: totalIncome, outcome: 0)
+                        }
+                    }
+                case .failure(let error):
+                    print("❌ Error fetching incomes: \(error)")
+                    if let data = response.data,
+                       let jsonString = String(data: data, encoding: .utf8) {
+                        print("📄 Response data: \(jsonString)")
+                    }
+                }
+            }
+
+        // Fetch outcomes
+        let outcomeUrl = "http://localhost:8080/api/expense"
+        
+        AF.request(outcomeUrl, parameters: parameters, headers: APIConfig.headers)
+            .validate()
+            .responseDecodable(of: [Outcome].self) { response in
+                switch response.result {
+                case .success(let outcomes):
+                    let totalOutcome = outcomes.reduce(Decimal(0)) { $0 + $1.amount }
+                    DispatchQueue.main.async {
+                        if var current = self.accountTotals[accountId] {
+                            current.outcome = totalOutcome
+                            self.accountTotals[accountId] = current
+                        } else {
+                            self.accountTotals[accountId] = (income: 0, outcome: totalOutcome)
+                        }
+                    }
+                case .failure(let error):
+                    print("❌ Error fetching outcomes: \(error)")
+                    if let data = response.data,
+                       let jsonString = String(data: data, encoding: .utf8) {
+                        print("📄 Response data: \(jsonString)")
+                    }
+                }
+            }
+    }
     
     var body: some View {
         NavigationView {
@@ -74,12 +146,14 @@ struct AccountView: View {
                                         icon: account.icon,
                                         title: account.title,
                                         balance: account.balance,
-                                        income: account.income,
-                                        outcome: account.outcome,
+                                        income: accountTotals[account.id]?.income ?? account.income,
+                                        outcome: accountTotals[account.id]?.outcome ?? account.outcome,
                                         backgroundColor: account.backgroundColor
                                     )
                                 }
-                                
+                                .onAppear {
+                                    fetchAccountTransactions(for: account.id)
+                                }
                             }
                         }
                     }
@@ -93,9 +167,9 @@ struct AccountView: View {
                     .padding()
                     .foregroundColor(Color(hex: "#3E2449"))
                 if let accountId = accountSelectionManager.selectedAccount?.id {
-                    TransHisView(accountIds: [accountId])
+                    TransHisView(accountIds: [accountId], startDate: startDate, endDate: endDate)
                 } else {
-                    TransHisView(accountIds: [])
+                    TransHisView(accountIds: [], startDate: startDate, endDate: endDate)
                 }
             }
             .sheet(isPresented: $showPopup) {

@@ -1,26 +1,31 @@
 import SwiftUI
 import Charts
+
 struct StatisticView: View {
     @StateObject var statsViewModel = StatisticViewModel()
     @Environment(\.presentationMode) var presentationMode: Binding<PresentationMode>
     @State private var selectedTab: String = "Week"
-    @State private var categories: [StatisticViewModel.Category] = []
+    
     let columns = [
         GridItem(.flexible(), spacing: 8),
-        GridItem(.flexible(), spacing: 8) 
+        GridItem(.flexible(), spacing: 8)
     ]
+    
     var body: some View {
         VStack(alignment: .leading, spacing: 20) {
             Text("Spendo")
                 .font(FontScheme.kWorkSansBold(size: 20))
                 .foregroundColor(Color(hex: "#3E2449"))
                 .padding(.horizontal)
+            
+            // Tab Selection
             VStack {
                 HStack(spacing: 20) {
                     ForEach(["Week", "Month", "Year"], id: \.self) { tab in
                         Button(action: {
                             withAnimation(.easeInOut(duration: 0.3)) {
                                 selectedTab = tab
+                                statsViewModel.updateDuration(for: tab)
                             }
                         }) {
                             Text(tab)
@@ -44,13 +49,15 @@ struct StatisticView: View {
                 )
             }
             .frame(maxWidth: .infinity, alignment: .center)
+            
+            // Spending Summary
             VStack(alignment: .leading) {
                 HStack {
-                    Text("WEEK SPENDING")
+                    Text("\(selectedTab.uppercased()) SPENDING")
                         .font(FontScheme.kWorkSansSemiBold(size: 15))
                         .foregroundColor(Color(hex: "#9375A0"))
                     Spacer()
-                    Text("$200")
+                    Text(formatAmount(statsViewModel.getTotalSpending()))
                         .font(FontScheme.kWorkSansSemiBold(size: 20))
                         .foregroundColor(Color(hex: "#3E2449"))
                 }
@@ -58,28 +65,34 @@ struct StatisticView: View {
                 .padding(.vertical)
                 
                 if #available(iOS 16.0, *) {
-                    Chart(DevTechieCourses.data) { course in
-                        BarMark(
-                            x: .value("Time", course.time.rawValue), y: .value("Money", course.money)
-                        )
-                        .foregroundStyle(
-                            course.category == .Income ? Color(hex: "#DF835F") :
-                                course.category == .Outcome ? Color(hex : "#9462A9"): Color.gray
-                        )
-                        
-                        .cornerRadius(8)
-                        .annotation(position: .overlay) {
-                            Text(course.money.formatted())
-                                .font(.caption.bold())
+                    let chartData = statsViewModel.getChartData()
+                    Chart {
+                        ForEach(chartData, id: \.date) { item in
+                            BarMark(
+                                x: .value("Date", item.date),
+                                y: .value("Income", item.income),
+                                width: .fixed(20)
+                            )
+                            .foregroundStyle(Color(hex: "#DF835F"))
+                            
+                            BarMark(
+                                x: .value("Date", item.date),
+                                y: .value("Expense", item.expense),
+                                width: .fixed(20)
+                            )
+                            .foregroundStyle(Color(hex: "#9462A9"))
                         }
                     }
                     .frame(height: 320)
+                    .chartYAxis {
+                        AxisMarks(position: .leading)
+                    }
+                    
                     HStack {
                         Label("Income", systemImage: "circle.fill")
-                            .foregroundColor(Color(hex : "#DF835F"))
-                        Label("Outcome", systemImage: "circle.fill")
+                            .foregroundColor(Color(hex: "#DF835F"))
+                        Label("Expense", systemImage: "circle.fill")
                             .foregroundColor(Color(hex: "#9462A9"))
-                        
                     }
                     .font(.caption)
                     .padding(.leading)
@@ -97,28 +110,46 @@ struct StatisticView: View {
                 .foregroundColor(Color(hex: "#3E2449"))
             
             ScrollView {
-                LazyVGrid(columns: columns, spacing: 8){
-                    ForEach(statsViewModel.cards) { card in
-                        SpendingCardView(icon: card.icon, title: card.title, amount: card.amount, backgroundColor: card.backgroundColor)}
+                if statsViewModel.isLoading {
+                    ProgressView()
+                        .frame(maxWidth: .infinity, maxHeight: .infinity)
+                } else if let error = statsViewModel.errorMessage {
+                    Text(error)
+                        .foregroundColor(.red)
+                        .padding()
+                } else {
+                    LazyVGrid(columns: columns, spacing: 8) {
+                        ForEach(statsViewModel.cards) { card in
+                            SpendingCardView(
+                                icon: card.icon,
+                                title: card.title,
+                                amount: card.amount,
+                                backgroundColor: card.backgroundColor
+                            )
+                        }
+                    }
+                    .padding(.horizontal)
                 }
-                .padding(.horizontal)
-                
-                
             }
         }
         .background(Color(.white))
         .hideNavigationBar()
         .navigationBarBackButtonHidden(true)
         .onAppear {
-            statsViewModel.fetchCategories { result in
-                if case let .failure(error) = result {
-                }
-            }
+            statsViewModel.fetchStatistics()
         }
-
     }
-
+    
+    private func formatAmount(_ amount: Decimal) -> String {
+        let formatter = NumberFormatter()
+        formatter.numberStyle = .currency
+        formatter.currencySymbol = "$"
+        formatter.maximumFractionDigits = 2
+        formatter.minimumFractionDigits = 2
+        return formatter.string(from: NSDecimalNumber(decimal: amount)) ?? "$0.00"
+    }
 }
+
 struct SpendingCardView: View {
     let icon: String
     let title: String
@@ -145,6 +176,7 @@ struct SpendingCardView: View {
         .shadow(color: .gray.opacity(0.2), radius: 4, x: 0, y: 2)
     }
 }
+
 struct StatisticView_Previews: PreviewProvider {
     static var previews: some View {
         StatisticView()

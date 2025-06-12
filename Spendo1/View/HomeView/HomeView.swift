@@ -5,6 +5,41 @@ struct HomeView: View {
     @Environment(\.presentationMode) var presentationMode: Binding<PresentationMode>
     @State private var selectedButton: String = "Today"
     
+    private var startDate: Date {
+        var calendar = Calendar.current
+        calendar.timeZone = TimeZone.current
+        let now = Date()
+        
+        switch selectedButton {
+        case "Today":
+            // Lấy đầu ngày hôm nay (00:00:00)
+            return calendar.startOfDay(for: now)
+            
+        case "Month":
+            // Lấy ngày đầu tiên của tháng này
+            let components = calendar.dateComponents([.year, .month], from: now)
+            return calendar.date(from: components) ?? now
+            
+        case "Year":
+            // Lấy ngày đầu tiên của năm này
+            let components = calendar.dateComponents([.year], from: now)
+            return calendar.date(from: components) ?? now
+            
+        default:
+            return calendar.startOfDay(for: now)
+        }
+    }
+    
+    private var endDate: Date {
+        return Date()
+    }
+    
+    private func formatDebugDate(_ date: Date) -> String {
+        let formatter = DateFormatter()
+        formatter.dateFormat = "dd/MM/yyyy HH:mm:ss"
+        formatter.timeZone = TimeZone.current
+        return formatter.string(from: date)
+    }
     
     var body: some View {
         VStack(alignment: .leading) {
@@ -19,11 +54,18 @@ struct HomeView: View {
                 }
                 Spacer()
                 VStack(alignment: .center) {
-                    Text("Today remaining")
+                    Text("Today Budget")
                         .font(FontScheme.kWorkSansRegular(size: 15))
                         .foregroundColor(Color(hex: "#3E2449"))
-                    Text("$50")
-                        .font(FontScheme.kInterRegular(size: 45))
+                    Text("$\(String(format: "%.2f", NSDecimalNumber(decimal: homeViewModel.todayBudget).doubleValue))")
+                        .font(FontScheme.kInterRegular(size: 20))
+                        .foregroundColor(Color(hex: "#3E2449"))
+                    Text("Remaining")
+                        .font(FontScheme.kWorkSansRegular(size: 15))
+                        .foregroundColor(Color(hex: "#3E2449"))
+                        .padding(.top, 5)
+                    Text("$\(String(format: "%.2f", NSDecimalNumber(decimal: homeViewModel.todayRemaining).doubleValue))")
+                        .font(FontScheme.kInterRegular(size: 20))
                         .foregroundColor(Color(hex: "#3E2449"))
                 }
             }
@@ -115,7 +157,7 @@ struct HomeView: View {
                 .padding(.vertical)
                 .foregroundColor(Color(hex: "#3E2449"))
 
-            TransHisView(accountIds: [])
+            TransHisView(accountIds: [], startDate: startDate, endDate: endDate)
             
             Spacer()
         }
@@ -123,6 +165,11 @@ struct HomeView: View {
         .edgesIgnoringSafeArea(.bottom)
         .hideNavigationBar()
         .navigationBarBackButtonHidden(true)
+        .onChange(of: selectedButton) { newValue in
+            print("🔄 Changed to \(newValue)")
+            print("📅 Start date: \(formatDebugDate(startDate))")
+            print("📅 End date: \(formatDebugDate(endDate))")
+        }
     }
 }
 

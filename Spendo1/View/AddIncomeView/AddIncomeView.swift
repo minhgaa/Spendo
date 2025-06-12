@@ -1,4 +1,5 @@
 import SwiftUI
+import Alamofire
 
 struct AddIncomeView: View {
     @Environment(\.dismiss) var dismiss
@@ -13,15 +14,20 @@ struct AddIncomeView: View {
     @State private var inputAmount: String = ""
     @State private var accountId: String? = nil
     @State private var selectedCategory: String? = nil
-    @State private var categories: [Category] = []
     @State private var createdIncome: Income? = nil
     @State private var IncomeDto: IncomeCreateDto? = nil
     @StateObject private var accountViewModel = AccountViewModel()
-    @StateObject private var statisticViewModel = StatisticViewModel()
     @StateObject private var viewModel = AddIncomeViewModel()
-    @State private var showAlert = false // Để hiển thị Alert
+    @State private var showAlert = false
     @State private var alertMessage = ""
     @Environment(\.presentationMode) var presentationMode
+
+    // MARK: - Category Data
+    struct Category: Identifiable, Hashable, Decodable {
+        let id: String
+        let name: String
+    }
+    @State private var categoryList: [Category] = []
 
     var body: some View {
         VStack(alignment: .leading, spacing: 20) {
@@ -179,9 +185,9 @@ struct AddIncomeView: View {
                         .padding()
 
                     HStack{
-                        if !statisticViewModel.categories.isEmpty {
+                        if !categoryList.isEmpty {
                             Picker("Category", selection: $selectedCategory) {
-                                ForEach(statisticViewModel.categories, id: \.id) { category in
+                                ForEach(categoryList, id: \.id) { category in
                                     Text(category.name).tag(category.id as String?)
                                 }
                             }
@@ -301,33 +307,45 @@ struct AddIncomeView: View {
                     print("Failed to load accounts: \(error)")
                 }
             }
-            statisticViewModel.fetchCategories {
-                result in
-                    if case .failure(let error) = result {
-                        print("Failed to load categories: \(error)")
-                    }
-            }
+            fetchCategories()
         }
         .hideNavigationBar()
         .navigationBarBackButtonHidden(true)
     }
+
+    private func fetchCategories() {
+        let url = "http://localhost:8080/api/category"
+        AF.request(url, method: .get, headers: APIConfig.headers)
+            .validate()
+            .responseDecodable(of: [Category].self) { response in
+                switch response.result {
+                case .success(let categories):
+                    self.categoryList = categories
+                case .failure(let error):
+                    print("Failed to load categories: \(error)")
+                }
+            }
+    }
+
     private func appendNumber(_ number: String) {
             inputAmount += number
         }
+
         private func appendDot() {
             if !inputAmount.contains(".") {
                 inputAmount += "."
             }
         }
+
     func handleAddIncome() {
         IncomeDto = IncomeCreateDto(
             title: title,
             description: description,
             amount: Decimal(selectedAmount),
-            accountid: accountId ?? "",
-            categoryid: selectedCategory ?? ""
+            accountId: accountId ?? "",
+            categoryId: selectedCategory ?? ""
         )
-        print(IncomeDto)
+        
         guard let IncomeDto = IncomeDto else {
             print("Income data is incomplete")
             return
@@ -348,15 +366,16 @@ struct AddIncomeView: View {
             }
         }
     }
+
     func getCategoryName(by id: String?) -> String {
-        if let id = id, let category = statisticViewModel.categories.first(where: { $0.id == id }) {
+        if let id = id, let category = categoryList.first(where: { $0.id == id }) {
             return category.name
         }
         return ""
     }
-
-
 }
+
 #Preview {
     AddIncomeView()
 }
+

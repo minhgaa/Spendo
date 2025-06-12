@@ -33,7 +33,7 @@ class TransferViewModel: ObservableObject {
             "categoryId": transferInfo.categoryId ?? NSNull()
         ]
         
-        AF.request(url, method: .post, parameters: parameters, encoding: JSONEncoding.default)
+        AF.request(url, method: .post, parameters: parameters, encoding: JSONEncoding.default, headers: APIConfig.headers)
             .validate()  // Kiểm tra mã trạng thái HTTP là 200-299
             .responseDecodable(of: Transfer.self) { response in
                 switch response.result {

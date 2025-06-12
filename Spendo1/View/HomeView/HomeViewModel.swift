@@ -1,5 +1,9 @@
 import Foundation
 import SwiftUI
+import Combine
+import Alamofire
+
+
 
 class HomeViewModel: ObservableObject {
     struct TransItem: Identifiable {
@@ -20,8 +24,14 @@ class HomeViewModel: ObservableObject {
         let frameColor: Color
     }
 
+    @Published var todayBudget: Decimal = 0
+    @Published var todayRemaining: Decimal = 0
+    @Published var budgets: [Budget] = []
+    private let baseURL = "http://localhost:8080/api"
+
     let cards: [CardItem]
     let trans: [TransItem]
+    
     init() {
         let rawCard = [
             ("16 November 2024", "Electric", "$100",1),
@@ -59,6 +69,59 @@ class HomeViewModel: ObservableObject {
                 title: item.0,
                 date: item.1,
                 amount: Decimal(item.2),
-                color: isRed ? .red : .green)}
+                color: isRed ? .red : .green)
+        }
+        
+        fetchBudgets()
+    }
+    
+    func fetchBudgets() {
+        let url = "\(baseURL)/budget"
+        
+        AF.request(url, headers: APIConfig.headers)
+            .validate()
+            .responseDecodable(of: [Budget].self) { [weak self] response in
+                switch response.result {
+                case .success(let budgets):
+                    DispatchQueue.main.async {
+                        self?.budgets = budgets
+                        self?.calculateTodayBudget()
+                        self?.fetchTodayOutcomes()
+                    }
+                case .failure(let error):
+                    print("❌ Failed to fetch budgets: \(error)")
+                    if let data = response.data,
+                       let jsonString = String(data: data, encoding: .utf8) {
+                        print("📄 Response data: \(jsonString)")
+                    }
+                }
+            }
+    }
+    
+    private func calculateTodayBudget() {
+        // Tính tổng budget limit của tất cả budgets
+        todayBudget = budgets.reduce(Decimal(0)) { $0 + $1.budgetLimit }
+    }
+    
+    private func fetchTodayOutcomes() {
+        let outcomeViewModel = AddOutcomeViewModel()
+        let today = Date()
+        
+        outcomeViewModel.getOutcomes(
+            accountIds: [],
+            categoryIds: budgets.map { $0.categoryId ?? "" },
+            startDate: Calendar.current.startOfDay(for: today),
+            endDate: today
+        ) { [weak self] result in
+            switch result {
+            case .success(let outcomes):
+                let totalOutcome = outcomes.reduce(Decimal(0)) { $0 + $1.amount }
+                DispatchQueue.main.async {
+                    self?.todayRemaining = (self?.todayBudget ?? 0) - totalOutcome
+                }
+            case .failure(let error):
+                print("❌ Failed to fetch outcomes: \(error)")
+            }
+        }
     }
 }

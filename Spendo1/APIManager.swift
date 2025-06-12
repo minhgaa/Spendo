@@ -34,6 +34,21 @@ struct LoginResponse: Codable {
     let token: String
 }
 
+struct APIConfig {
+    static var headers: HTTPHeaders {
+        var headers: HTTPHeaders = [
+            "Content-Type": "application/json",
+            "Accept": "application/json"
+        ]
+        if let token = UserDefaults.standard.string(forKey: "JWTToken") {
+            headers.add(name: "Authorization", value: "Bearer \(token)")
+            print("🔐 Token sent: Bearer \(token)")
+        } else {
+            print("⚠️ No JWT token found in UserDefaults")
+        }
+        return headers
+    }
+}
 
 class APIManager {
     static let shared = APIManager()

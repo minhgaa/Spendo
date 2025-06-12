@@ -20,6 +20,25 @@ struct Budget: Codable, Identifiable {
     let endDate: String
     let current: Decimal
     let budgetLimit: Decimal
+    let period: Int
+    let categoryId: String?
+
+}
+
+// Model cho response của User
+struct UserResponse: Codable {
+    let id: String
+    let name: String?
+    let email: String?
+    let createdat: String?
+    let updatedat: String?
+    let currencyid: String?
+}
+
+// Model cho response của Category
+struct CategoryResponse: Codable {
+    let id: String
+    let name: String?
 }
 
 // ViewModel for Budget
@@ -35,14 +54,137 @@ class BudgetViewModel: ObservableObject {
     
     private var cancellables = Set<AnyCancellable>()
     
-    // Lấy ngân sách theo ID
+    func getBudgets() {
+        isLoading = true
+        errorMessage = nil
+        
+        
+        AF.request(baseUrl, method: .get, headers: APIConfig.headers)
+            .validate()
+            .responseData { [weak self] response in
+                self?.isLoading = false
+                
+                
+                if let error = response.error {
+                    if let data = response.data, let str = String(data: data, encoding: .utf8) {
+                        print("🔴 Error response body: \(str)")
+                    }
+                    
+                    self?.errorMessage = "Network error: \(error.localizedDescription)"
+                    return
+                }
+                
+                if let data = response.data,
+                   let responseString = String(data: data, encoding: .utf8) {
+                    print("🔴 Raw Response Data:")
+                    print(responseString)
+                    
+                    if let json = try? JSONSerialization.jsonObject(with: data),
+                       let prettyData = try? JSONSerialization.data(withJSONObject: json, options: .prettyPrinted),
+                       let prettyString = String(data: prettyData, encoding: .utf8) {
+                        print("🔵 Pretty JSON structure:")
+                        print(prettyString)
+                    }
+                    
+                    do {
+                        let decoder = JSONDecoder()
+                        let budgets = try decoder.decode([Budget].self, from: data)
+                        print("✅ Successfully decoded \(budgets.count) budgets")
+                        self?.budgets = budgets
+                    } catch {
+                        print("❌ Decoding error: \(error)")
+                        if let decodingError = error as? DecodingError {
+                            switch decodingError {
+                            case .keyNotFound(let key, let context):
+                                print("Missing key: \(key)")
+                                print("Context: \(context)")
+                            case .typeMismatch(let type, let context):
+                                print("Type mismatch: expected \(type)")
+                                print("Context: \(context)")
+                            case .valueNotFound(let type, let context):
+                                print("Value not found: expected \(type)")
+                                print("Context: \(context)")
+                            case .dataCorrupted(let context):
+                                print("Data corrupted: \(context)")
+                            @unknown default:
+                                print("Unknown decoding error")
+                            }
+                        }
+                        self?.errorMessage = "Error decoding budgets: \(error.localizedDescription)"
+                    }
+                } else {
+                    print("❌ No response data received")
+                    self?.errorMessage = "No data received from server"
+                }
+            }
+    }
+    
+    func createBudget(budgetInfo: BudgetCreateDto, completion: @escaping () -> Void ) {
+        isLoading = true
+        errorMessage = nil
+        
+        let url = baseUrl
+        
+        print("🔵 Creating budget with payload:")
+        print("Name: \(budgetInfo.name)")
+        print("Start Date: \(budgetInfo.startDate)")
+        print("Period: \(budgetInfo.period)")
+        print("Budget Limit: \(budgetInfo.budgetLimit)")
+        print("Category ID: \(budgetInfo.categoryId ?? "nil")")
+        print("User ID: \(budgetInfo.userId)")
+        print("URL: \(url)")
+        
+        AF.request(url, method: .post, parameters: budgetInfo, encoder: JSONParameterEncoder.default, headers: APIConfig.headers)
+            .validate()
+            .responseData { [weak self] response in
+                self?.isLoading = false
+                
+                print("🔴 Response Status Code: \(response.response?.statusCode ?? -1)")
+                
+                if let data = response.data,
+                   let responseString = String(data: data, encoding: .utf8) {
+                    print("🔴 Response body:")
+                    print(responseString)
+                    
+                    do {
+                        let decoder = JSONDecoder()
+                        let budget = try decoder.decode(Budget.self, from: data)
+                        print("✅ Budget created successfully: \(budget)")
+                        self?.budgets.append(budget)
+                    } catch {
+                        print("❌ Failed to decode budget:")
+                        print("Error: \(error.localizedDescription)")
+                        if let decodingError = error as? DecodingError {
+                            switch decodingError {
+                            case .keyNotFound(let key, let context):
+                                print("Missing key: \(key)")
+                                print("Context: \(context)")
+                            case .typeMismatch(let type, let context):
+                                print("Type mismatch: expected \(type)")
+                                print("Context: \(context)")
+                            case .valueNotFound(let type, let context):
+                                print("Value not found: expected \(type)")
+                                print("Context: \(context)")
+                            case .dataCorrupted(let context):
+                                print("Data corrupted: \(context)")
+                            @unknown default:
+                                print("Unknown decoding error")
+                            }
+                        }
+                        self?.errorMessage = "Failed to create budget: \(error.localizedDescription)"
+                    }
+                }
+                completion() 
+            }
+    }
+    
     func getBudget(byId id: String) {
         isLoading = true
         errorMessage = nil
         
         let url = "\(baseUrl)/\(id)"
         
-        AF.request(url, method: .get)
+        AF.request(url, method: .get, headers: APIConfig.headers)
             .validate()
             .responseDecodable(of: Budget.self) { [weak self] response in
                 self?.isLoading = false
@@ -61,7 +203,7 @@ class BudgetViewModel: ObservableObject {
 
         let url = "\(baseUrl)/category/\(categoryid)"
 
-        AF.request(url, method: .get)
+        AF.request(url, method: .get , headers: APIConfig.headers)
             .validate()
             .responseDecodable(of: Budget.self) { response in
                 self.isLoading = false
@@ -73,48 +215,6 @@ class BudgetViewModel: ObservableObject {
                 }
             }
     }
-    func getBudgets() {
-        isLoading = true
-        errorMessage = nil
-        
-        let userId = 1
-        
-        let url = "\(baseUrl)?userId=\(userId)"
-        
-        AF.request(url, method: .get)
-            .validate()
-            .responseDecodable(of: [Budget].self) { [weak self] response in
-                self?.isLoading = false
-                switch response.result {
-                case .success(let budgets):
-                    self?.budgets = budgets
-                case .failure(let error):
-                    self?.errorMessage = "Error fetching budgets: \(error.localizedDescription)"
-                }
-            }
-    }
-    
-    func createBudget(budgetInfo: BudgetCreateDto, completion: @escaping () -> Void) {
-        isLoading = true
-        errorMessage = nil
-        
-        let url = baseUrl
-        
-        AF.request(url, method: .post, parameters: budgetInfo, encoder: JSONParameterEncoder.default)
-            .validate()
-            .responseDecodable(of: Budget.self) { [weak self] response in
-                self?.isLoading = false
-                switch response.result {
-                case .success(let budget):
-                    self?.budgets.append(budget)
-                    print("Budget created successfully.")
-                case .failure(let error):
-                    print("Failed to create budget: \(error.localizedDescription)")
-                }
-                completion() 
-            }
-    }
-
     
     func updateBudget(id: String, budgetInfo: BudgetCreateDto) {
         isLoading = true
@@ -122,27 +222,26 @@ class BudgetViewModel: ObservableObject {
         
         let url = "\(baseUrl)/\(id)"
         
-        AF.request(url, method: .put, parameters: budgetInfo, encoder: JSONParameterEncoder.default)
+        AF.request(url, method: .put, parameters: budgetInfo, encoder: JSONParameterEncoder.default, headers: APIConfig.headers)
             .validate()
             .response { [weak self] response in
                 self?.isLoading = false
                 switch response.result {
                 case .success:
-                    self?.getBudget(byId: id) // Cập nhật lại ngân sách sau khi thay đổi
+                    self?.getBudget(byId: id)
                 case .failure(let error):
                     self?.errorMessage = "Error updating budget: \(error.localizedDescription)"
                 }
             }
     }
     
-    // Xóa ngân sách
     func deleteBudget(id: String) {
         isLoading = true
         errorMessage = nil
         
         let url = "\(baseUrl)/\(id)"
         
-        AF.request(url, method: .delete)
+        AF.request(url, method: .delete, headers: APIConfig.headers)
             .validate()
             .response { [weak self] response in
                 self?.isLoading = false

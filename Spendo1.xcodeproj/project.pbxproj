@@ -19,14 +19,10 @@
 		DA38F4502D227D7000DE9BA5 /* HomeViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = DA38F44E2D227D7000DE9BA5 /* HomeViewModel.swift */; };
 		DA38F4592D227DA800DE9BA5 /* StatisticViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = DA38F4582D227DA800DE9BA5 /* StatisticViewModel.swift */; };
 		DA38F45A2D227DA800DE9BA5 /* StatisticView.swift in Sources */ = {isa = PBXBuildFile; fileRef = DA38F4572D227DA800DE9BA5 /* StatisticView.swift */; };
-		DA38F4612D227E0400DE9BA5 /* FontScheme.swift in Sources */ = {isa = PBXBuildFile; fileRef = DA38F45E2D227E0300DE9BA5 /* FontScheme.swift */; };
-		DA38F4622D227E0400DE9BA5 /* AppConstants.swift in Sources */ = {isa = PBXBuildFile; fileRef = DA38F45F2D227E0400DE9BA5 /* AppConstants.swift */; };
-		DA38F4632D227E0400DE9BA5 /* ColorConstants.swift in Sources */ = {isa = PBXBuildFile; fileRef = DA38F4602D227E0400DE9BA5 /* ColorConstants.swift */; };
 		DA38F4672D227E4400DE9BA5 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = DA38F4652D227E4400DE9BA5 /* AppDelegate.swift */; };
 		DA38F4682D227E4400DE9BA5 /* SpendoApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = DA38F4662D227E4400DE9BA5 /* SpendoApp.swift */; };
 		DA38F46B2D227E7D00DE9BA5 /* APIManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = DA38F46A2D227E7D00DE9BA5 /* APIManager.swift */; };
 		DA38F4732D227E8C00DE9BA5 /* ChartExtension.swift in Sources */ = {isa = PBXBuildFile; fileRef = DA38F46C2D227E8C00DE9BA5 /* ChartExtension.swift */; };
-		DA38F4742D227E8C00DE9BA5 /* RoundedCornersView.swift in Sources */ = {isa = PBXBuildFile; fileRef = DA38F46D2D227E8C00DE9BA5 /* RoundedCornersView.swift */; };
 		DA38F4752D227E8C00DE9BA5 /* UINavigationController.swift in Sources */ = {isa = PBXBuildFile; fileRef = DA38F46E2D227E8C00DE9BA5 /* UINavigationController.swift */; };
 		DA38F4762D227E8C00DE9BA5 /* ViewExtension.swift in Sources */ = {isa = PBXBuildFile; fileRef = DA38F46F2D227E8C00DE9BA5 /* ViewExtension.swift */; };
 		DA38F4772D227E8C00DE9BA5 /* ColorExtension.swift in Sources */ = {isa = PBXBuildFile; fileRef = DA38F4702D227E8C00DE9BA5 /* ColorExtension.swift */; };
@@ -36,6 +32,10 @@
 		DA38F47E2D227FAB00DE9BA5 /* AddIncomeView.swift in Sources */ = {isa = PBXBuildFile; fileRef = DA38F4442D227D2A00DE9BA5 /* AddIncomeView.swift */; };
 		DA38F47F2D227FAB00DE9BA5 /* AddIncomeViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = DA38F4452D227D2A00DE9BA5 /* AddIncomeViewModel.swift */; };
 		DA41D9BA2DF96BCE00D1EF17 /* credentials.plist in Resources */ = {isa = PBXBuildFile; fileRef = DA41D9B92DF96BCE00D1EF17 /* credentials.plist */; };
+		DA6B9A7C2DF9D72300B88FE5 /* RoundedCornersView.swift in Sources */ = {isa = PBXBuildFile; fileRef = DA6B9A7B2DF9D72300B88FE5 /* RoundedCornersView.swift */; };
+		DA6B9A812DF9D78600B88FE5 /* AppConstants.swift in Sources */ = {isa = PBXBuildFile; fileRef = DA6B9A7D2DF9D78600B88FE5 /* AppConstants.swift */; };
+		DA6B9A822DF9D78600B88FE5 /* ColorConstants.swift in Sources */ = {isa = PBXBuildFile; fileRef = DA6B9A7E2DF9D78600B88FE5 /* ColorConstants.swift */; };
+		DA6B9A832DF9D78600B88FE5 /* FontScheme.swift in Sources */ = {isa = PBXBuildFile; fileRef = DA6B9A7F2DF9D78600B88FE5 /* FontScheme.swift */; };
 		DA9170B32D2560EF00A92DA3 /* AccountDetailView.swift in Sources */ = {isa = PBXBuildFile; fileRef = DA9170B22D2560EF00A92DA3 /* AccountDetailView.swift */; };
 		DA9170B72D256BE100A92DA3 /* AddAccountViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = DA9170B62D256BE100A92DA3 /* AddAccountViewModel.swift */; };
 		DA9170BB2D25A9C600A92DA3 /* AccountSelected.swift in Sources */ = {isa = PBXBuildFile; fileRef = DA9170BA2D25A9C600A92DA3 /* AccountSelected.swift */; };
@@ -84,14 +84,10 @@
 		DA38F44E2D227D7000DE9BA5 /* HomeViewModel.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = HomeViewModel.swift; sourceTree = "<group>"; };
 		DA38F4572D227DA800DE9BA5 /* StatisticView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StatisticView.swift; sourceTree = "<group>"; };
 		DA38F4582D227DA800DE9BA5 /* StatisticViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StatisticViewModel.swift; sourceTree = "<group>"; };
-		DA38F45E2D227E0300DE9BA5 /* FontScheme.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = FontScheme.swift; sourceTree = "<group>"; };
-		DA38F45F2D227E0400DE9BA5 /* AppConstants.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AppConstants.swift; sourceTree = "<group>"; };
-		DA38F4602D227E0400DE9BA5 /* ColorConstants.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ColorConstants.swift; sourceTree = "<group>"; };
 		DA38F4652D227E4400DE9BA5 /* AppDelegate.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 		DA38F4662D227E4400DE9BA5 /* SpendoApp.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SpendoApp.swift; sourceTree = "<group>"; };
 		DA38F46A2D227E7D00DE9BA5 /* APIManager.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = APIManager.swift; sourceTree = "<group>"; };
 		DA38F46C2D227E8C00DE9BA5 /* ChartExtension.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ChartExtension.swift; sourceTree = "<group>"; };
-		DA38F46D2D227E8C00DE9BA5 /* RoundedCornersView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = RoundedCornersView.swift; sourceTree = "<group>"; };
 		DA38F46E2D227E8C00DE9BA5 /* UINavigationController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = UINavigationController.swift; sourceTree = "<group>"; };
 		DA38F46F2D227E8C00DE9BA5 /* ViewExtension.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ViewExtension.swift; sourceTree = "<group>"; };
 		DA38F4702D227E8C00DE9BA5 /* ColorExtension.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ColorExtension.swift; sourceTree = "<group>"; };
@@ -105,6 +101,10 @@
 		DA5E6C932D227302008B774B /* Preview Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = "Preview Assets.xcassets"; sourceTree = "<group>"; };
 		DA5E6C992D227302008B774B /* Spendo1Tests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = Spendo1Tests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		DA5E6CA32D227302008B774B /* Spendo1UITests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = Spendo1UITests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
+		DA6B9A7B2DF9D72300B88FE5 /* RoundedCornersView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RoundedCornersView.swift; sourceTree = "<group>"; };
+		DA6B9A7D2DF9D78600B88FE5 /* AppConstants.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppConstants.swift; sourceTree = "<group>"; };
+		DA6B9A7E2DF9D78600B88FE5 /* ColorConstants.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ColorConstants.swift; sourceTree = "<group>"; };
+		DA6B9A7F2DF9D78600B88FE5 /* FontScheme.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FontScheme.swift; sourceTree = "<group>"; };
 		DA9170B22D2560EF00A92DA3 /* AccountDetailView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AccountDetailView.swift; sourceTree = "<group>"; };
 		DA9170B62D256BE100A92DA3 /* AddAccountViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AddAccountViewModel.swift; sourceTree = "<group>"; };
 		DA9170BA2D25A9C600A92DA3 /* AccountSelected.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AccountSelected.swift; sourceTree = "<group>"; };
@@ -224,16 +224,6 @@
 			path = View;
 			sourceTree = "<group>";
 		};
-		DA38F4642D227E0800DE9BA5 /* New Group */ = {
-			isa = PBXGroup;
-			children = (
-				DA38F45F2D227E0400DE9BA5 /* AppConstants.swift */,
-				DA38F4602D227E0400DE9BA5 /* ColorConstants.swift */,
-				DA38F45E2D227E0300DE9BA5 /* FontScheme.swift */,
-			);
-			path = "New Group";
-			sourceTree = "<group>";
-		};
 		DA38F4692D227E4D00DE9BA5 /* Application */ = {
 			isa = PBXGroup;
 			children = (
@@ -247,10 +237,10 @@
 			isa = PBXGroup;
 			children = (
 				DA38F4712D227E8C00DE9BA5 /* APIExtensions.swift */,
+				DA6B9A7B2DF9D72300B88FE5 /* RoundedCornersView.swift */,
 				DA38F46C2D227E8C00DE9BA5 /* ChartExtension.swift */,
 				DA38F4702D227E8C00DE9BA5 /* ColorExtension.swift */,
 				DA38F4722D227E8C00DE9BA5 /* EncodableExtension.swift */,
-				DA38F46D2D227E8C00DE9BA5 /* RoundedCornersView.swift */,
 				DA38F46E2D227E8C00DE9BA5 /* UINavigationController.swift */,
 				DA38F46F2D227E8C00DE9BA5 /* ViewExtension.swift */,
 			);
@@ -288,13 +278,13 @@
 		DA5E6C8B2D227301008B774B /* Spendo1 */ = {
 			isa = PBXGroup;
 			children = (
+				DA6B9A802DF9D78600B88FE5 /* Constants */,
 				DA41D9B82DF96BC600D1EF17 /* Info.plist */,
 				DA41D9B92DF96BCE00D1EF17 /* credentials.plist */,
 				DA38F47D2D227EB800DE9BA5 /* CustomView */,
 				DA38F46A2D227E7D00DE9BA5 /* APIManager.swift */,
 				DA38F47A2D227E9100DE9BA5 /* Extensions */,
 				DA38F4692D227E4D00DE9BA5 /* Application */,
-				DA38F4642D227E0800DE9BA5 /* New Group */,
 				DA38F4352D227B4D00DE9BA5 /* TabItem.swift */,
 				DA38F4362D227B4D00DE9BA5 /* TabViewModel.swift */,
 				DA38F45C2D227DCF00DE9BA5 /* View */,
@@ -312,6 +302,16 @@
 				DA5E6C932D227302008B774B /* Preview Assets.xcassets */,
 			);
 			path = "Preview Content";
+			sourceTree = "<group>";
+		};
+		DA6B9A802DF9D78600B88FE5 /* Constants */ = {
+			isa = PBXGroup;
+			children = (
+				DA6B9A7D2DF9D78600B88FE5 /* AppConstants.swift */,
+				DA6B9A7E2DF9D78600B88FE5 /* ColorConstants.swift */,
+				DA6B9A7F2DF9D78600B88FE5 /* FontScheme.swift */,
+			);
+			path = Constants;
 			sourceTree = "<group>";
 		};
 		DA9170B82D256BED00A92DA3 /* AddAccountView */ = {
@@ -533,9 +533,10 @@
 				DA9170BB2D25A9C600A92DA3 /* AccountSelected.swift in Sources */,
 				DA38F4502D227D7000DE9BA5 /* HomeViewModel.swift in Sources */,
 				DA38F4772D227E8C00DE9BA5 /* ColorExtension.swift in Sources */,
+				DA6B9A812DF9D78600B88FE5 /* AppConstants.swift in Sources */,
+				DA6B9A822DF9D78600B88FE5 /* ColorConstants.swift in Sources */,
+				DA6B9A832DF9D78600B88FE5 /* FontScheme.swift in Sources */,
 				DA9170C02D25C9E300A92DA3 /* TransferView.swift in Sources */,
-				DA38F4742D227E8C00DE9BA5 /* RoundedCornersView.swift in Sources */,
-				DA38F4622D227E0400DE9BA5 /* AppConstants.swift in Sources */,
 				DA38F4592D227DA800DE9BA5 /* StatisticViewModel.swift in Sources */,
 				DA38F4792D227E8C00DE9BA5 /* EncodableExtension.swift in Sources */,
 				DA38F4762D227E8C00DE9BA5 /* ViewExtension.swift in Sources */,
@@ -548,7 +549,7 @@
 				DA9170C82D2684B300A92DA3 /* BudgetViewModel.swift in Sources */,
 				DA38F4732D227E8C00DE9BA5 /* ChartExtension.swift in Sources */,
 				DA9170C32D263E8200A92DA3 /* AddOutcomeView.swift in Sources */,
-				DA38F4612D227E0400DE9BA5 /* FontScheme.swift in Sources */,
+				DA6B9A7C2DF9D72300B88FE5 /* RoundedCornersView.swift in Sources */,
 				DA9170CE2D26A5C600A92DA3 /* TransactionDetailView.swift in Sources */,
 				DA9170CA2D2684BE00A92DA3 /* BudgetView.swift in Sources */,
 				DA38F4672D227E4400DE9BA5 /* AppDelegate.swift in Sources */,
@@ -559,7 +560,6 @@
 				DA9170C52D263E9500A92DA3 /* AddOutcomeViewModel.swift in Sources */,
 				DA025B462D22A4AA001D55EB /* LoginView.swift in Sources */,
 				DA38F47C2D227EAF00DE9BA5 /* CardView.swift in Sources */,
-				DA38F4632D227E0400DE9BA5 /* ColorConstants.swift in Sources */,
 				DA38F44F2D227D7000DE9BA5 /* HomeView.swift in Sources */,
 				DA38F43B2D227B4D00DE9BA5 /* TabViewModel.swift in Sources */,
 			);

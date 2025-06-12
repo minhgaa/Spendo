@@ -1,4 +1,5 @@
 import SwiftUI
+import Alamofire
 
 struct BudgetListView: View {
     @StateObject private var viewModel = BudgetViewModel()
@@ -77,22 +78,19 @@ struct BudgetListView: View {
             }
             .alert(item: $selectedBudget) { budget in
                 Alert(
-                    title: Text("Budget Details"),
-                    message: Text("Name: \(budget.name)\nLimit: \(String(format: "%.2f", NSDecimalNumber(decimal: budget.budgetLimit).doubleValue))"),
-                    primaryButton: .default(Text("Update")) {
-                        // Update action
-                        updateBudget(budget)
-                    },
-                    secondaryButton: .destructive(Text("Delete")) {
+                    title: Text("Delete Confirmation"),
+                    message: Text("Are you sure you want to delete budget \"\(budget.name)\"?"),
+                    primaryButton: .destructive(Text("Delete")) {
                         deleteBudget(budget)
-                    }
+                    },
+                    secondaryButton: .cancel(Text("Cancel"))
                 )
             }
         }
     }
     
     func updateBudget(_ budget: Budget) {
-        // Implement update logic here (show update form or something)
+        // Remove this unused function
     }
     
     func deleteBudget(_ budget: Budget) {
@@ -106,22 +104,24 @@ struct CreateBudgetView: View {
     @State private var name = ""
     @State private var startDate = Date()
     @State private var period = 3
-    @State private var categoryId: String? = nil
     @State private var title: String = ""
     @State private var description: String = ""
-    @State private var category: String = ""
     @State private var createdOn: Date = Date()
     @State private var showPopup = false
     @State private var showPopup1 = false
     @State private var selectedAmount: Double = 0
     @State private var inputAmount: String = ""
-    @State private var accountId: String? = nil
     @State private var selectedCategory: String? = nil
-    @State private var categories: [Category] = []
     @StateObject private var accountViewModel = AccountViewModel()
-    @StateObject private var statisticViewModel = StatisticViewModel()
 
-    let periods = [3, 5, 7, 12] 
+    // MARK: - Category Data
+    struct Category: Identifiable, Hashable, Decodable {
+        let id: String
+        let name: String
+    }
+    @State private var categoryList: [Category] = []
+
+    let periods = [1,2,3,4,5,6,7]
 
     var body: some View {
         NavigationView {
@@ -133,9 +133,9 @@ struct CreateBudgetView: View {
                     DatePicker("Start Date", selection: $startDate, displayedComponents: .date)
                         .datePickerStyle(CompactDatePickerStyle())
                     
-                    Picker("Period (in months)", selection: $period) {
+                    Picker("Period (in days)", selection: $period) {
                         ForEach(periods, id: \.self) { period in
-                            Text("\(period) months")
+                            Text("\(period) days")
                         }
                     }
                     .pickerStyle(SegmentedPickerStyle())
@@ -257,9 +257,9 @@ struct CreateBudgetView: View {
                                 .padding()
 
                             HStack{
-                                if !statisticViewModel.categories.isEmpty {
+                                if !categoryList.isEmpty {
                                     Picker("Category", selection: $selectedCategory) {
-                                        ForEach(statisticViewModel.categories, id: \.id) { category in
+                                        ForEach(categoryList, id: \.id) { category in
                                             Text(category.name).tag(category.id as String?)
                                         }
                                     }
@@ -286,29 +286,14 @@ struct CreateBudgetView: View {
                 
                 Section {
                     Button("Create Budget") {
-                        let budgetInfo = BudgetCreateDto(
-                            name: name,
-                            startDate: formatDate(startDate),
-                            period: period,
-                            budgetLimit: Decimal(selectedAmount),
-                            categoryId: categoryId,
-                            userId: ""
-                        )
-                        viewModel.createBudget(budgetInfo: budgetInfo) {
-                                            dismiss()
-                                        }
+                        createBudget()
                     }
                 }
                 .padding(.horizontal,100)
             }
             .navigationTitle("Add Budget")
             .onAppear() {
-                statisticViewModel.fetchCategories {
-                    result in
-                        if case .failure(let error) = result {
-                            print("Failed to load categories: \(error)")
-                        }
-                }
+                fetchCategories()
             }
         }
     }
@@ -321,7 +306,7 @@ struct CreateBudgetView: View {
             }
         }
     func getCategoryName(by id: String?) -> String {
-        if let id = id, let category = statisticViewModel.categories.first(where: { $0.id == id }) {
+        if let id = id, let category = categoryList.first(where: { $0.id == id }) {
             return category.name
         }
         return ""
@@ -330,6 +315,50 @@ struct CreateBudgetView: View {
         let formatter = DateFormatter()
         formatter.dateFormat = "yyyy-MM-dd"
         return formatter.string(from: date)
+    }
+    private func fetchCategories() {
+        let url = "http://localhost:8080/api/category"
+        AF.request(url, method: .get, headers: APIConfig.headers)
+            .validate()
+            .responseDecodable(of: [Category].self) { response in
+                switch response.result {
+                case .success(let categories):
+                    self.categoryList = categories
+                case .failure(let error):
+                    print("Failed to load categories: \(error)")
+                }
+            }
+    }
+    private func createBudget() {
+        print("🔵 Validating budget data:")
+        print("Name: \(name)")
+        print("Start Date: \(formatDate(startDate))")
+        print("Period: \(period)")
+        print("Amount: \(selectedAmount)")
+        print("Selected Category: \(selectedCategory ?? "nil")")
+        
+        guard !name.isEmpty else {
+            print("❌ Budget name is empty")
+            return
+        }
+        
+        guard selectedAmount > 0 else {
+            print("❌ Budget limit must be greater than 0")
+            return
+        }
+        
+        let budgetInfo = BudgetCreateDto(
+            name: name,
+            startDate: formatDate(startDate),
+            period: period,
+            budgetLimit: Decimal(selectedAmount),
+            categoryId: selectedCategory,
+            userId: UserDefaults.standard.string(forKey: "userId") ?? ""
+        )
+        
+        viewModel.createBudget(budgetInfo: budgetInfo) {
+            dismiss()
+        }
     }
 }
 

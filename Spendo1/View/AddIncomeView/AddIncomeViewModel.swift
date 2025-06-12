@@ -6,17 +6,20 @@ struct IncomeCreateDto: Codable {
     var title: String
     var description: String?
     var amount: Decimal
-    var accountid: String
-    var categoryid: String
+    var accountId: String
+    var categoryId: String
 }
 struct Income: Codable {
-    var id: String
-    var title: String
-    var description: String?
-    var amount: Decimal
-    var accountid: String
-    var categoryid: String
-    var createdat: String
+    let id: String
+    let title: String
+    let description: String?
+    let amount: Decimal
+    let createdAt: String
+    let updatedAt: String
+    let accountId: String
+    let accountName: String?
+    let categoryId: String?
+    let categoryName: String?
 }
 
 
@@ -36,8 +39,8 @@ class AddIncomeViewModel: ObservableObject {
             "title": income.title ?? "",
             "description": income.description ?? "",
             "amount": income.amount,
-            "accountId": income.accountid,
-            "categoryId": income.categoryid ?? NSNull()
+            "accountId": income.accountId,
+            "categoryId": income.categoryId ?? NSNull()
         ]
 
         print("📤 Sending parameters: \(parameters)")
@@ -72,49 +75,42 @@ class AddIncomeViewModel: ObservableObject {
     ) {
         var parameters: [String: Any] = [:]
 
-        // Kiểm tra và thêm accountIds vào parameters nếu mảng không rỗng
         if !accountIds.isEmpty {
             parameters["accountIds"] = accountIds.map { String($0) }
         }
 
-        // Kiểm tra và thêm categoryIds vào parameters nếu mảng không rỗng
         if !categoryIds.isEmpty {
             parameters["categoryIds"] = categoryIds.map { String($0) }
         }
 
-        let formatter = ISO8601DateFormatter()
+        let formatter = DateFormatter()
+        formatter.dateFormat = "yyyy-MM-dd"
+        formatter.timeZone = TimeZone.current
 
-        // Chỉ thêm startDate vào nếu có giá trị
         if let startDate = startDate {
             parameters["startDate"] = formatter.string(from: startDate)
         }
 
-        // Chỉ thêm endDate vào nếu có giá trị
         if let endDate = endDate {
             parameters["endDate"] = formatter.string(from: endDate)
         }
-        var headers: HTTPHeaders = []
-        if let token = UserDefaults.standard.string(forKey: "JWTToken") {
-            headers.add(name: "Authorization", value: "Bearer \(token)")
-            print("🔐 Token sent: Bearer \(token)")
-        } else {
-            print("⚠️ No JWT token found in UserDefaults")
-        }
-
 
         let url = "\(baseURL)/income"
-        AF.request(url, method: .get, parameters: parameters, headers: headers).responseData { response in
+        AF.request(url, method: .get, parameters: parameters, headers: APIConfig.headers).responseData { response in
             switch response.result {
             case .success(let data):
                 if let jsonString = String(data: data, encoding: .utf8) {
+                    print("📥 Raw response data: \(jsonString)")
                 }
                 do {
                     let incomes = try JSONDecoder().decode([Income].self, from: data)
                     completion(.success(incomes))
                 } catch {
+                    print("❌ Decoding error: \(error)")
                     completion(.failure(error))
                 }
             case .failure(let error):
+                print("❌ Network error: \(error)")
                 completion(.failure(error))
             }
         }

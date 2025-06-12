@@ -67,18 +67,38 @@ class AccountViewModel: ObservableObject {
             }
     }
     func deleteAccount(id: String, completion: @escaping (Result<Void, Error>) -> Void) {
-        let url = "\(baseURL)/account/\(id)"
-        AF.request(url, method: .delete)
+        let url = "\(baseURL)account/\(id)"
+        print("🔗 Attempting to delete account with URL: \(url)")
+        print("🆔 Account ID: \(id)")
+        
+        AF.request(url, method: .delete, headers: APIConfig.headers)
             .validate()
             .response { response in
+                print("📡 Response status code: \(response.response?.statusCode ?? -1)")
+                print("📝 Response headers: \(response.response?.headers ?? HTTPHeaders())")
+                
+                if let data = response.data,
+                   let jsonString = String(data: data, encoding: .utf8) {
+                    print("📄 Response data: \(jsonString)")
+                }
+                
                 switch response.result {
                 case .success:
-                    print("Account deleted successfully")
-                    completion(.success(()))
+                    print("✅ Account deleted successfully")
+                    DispatchQueue.main.async {
+                        self.getAccount { _ in }  // Refresh account list after deletion
+                        completion(.success(()))
+                    }
                     
                 case .failure(let error):
-                    print("Failed to delete account: \(error.localizedDescription)")
-                    completion(.failure(error))  // Lỗi
+                    print("❌ Failed to delete account: \(error.localizedDescription)")
+                    print("❌ Error details: \(error)")
+                    if let underlyingError = error.underlyingError {
+                        print("🔍 Underlying error: \(underlyingError)")
+                    }
+                    DispatchQueue.main.async {
+                        completion(.failure(error))
+                    }
                 }
             }
     }
